@@ -48,7 +48,9 @@ const theme = extendTheme({
     },
     MuiInputLabel: {
       styleOverrides: {
-        root: { fontSize: '0.875rem' }
+        root: {
+          '&.MuiTypography-body1': { fontSize: '0.875rem' }
+        }
       }
     },
     MuiTypography: {
