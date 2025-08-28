@@ -47,6 +47,8 @@ function Column({ column }) {
     <Box
       ref={setNodeRef}
       style={dndKitColumnStyles}
+      {...attributes}
+      {...listeners}
       sx={{
         minWidth: '300px',
         maxWidth: '300px',
@@ -161,11 +163,7 @@ function Column({ column }) {
       >
         <Button startIcon={<AddCardIcon />}>Add new card</Button>
         <Tooltip title="Drag to move">
-          <DragHandleIcon
-            sx={{ cursor: 'pointer' }}
-            {...attributes}
-            {...listeners}
-          />
+          <DragHandleIcon sx={{ cursor: 'pointer' }} />
         </Tooltip>
       </Box>
     </Box>
