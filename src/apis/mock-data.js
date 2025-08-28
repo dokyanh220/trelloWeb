@@ -178,17 +178,6 @@ export const mockData = {
             memberIds: [],
             comments: [],
             attachments: []
-          },
-          {
-            _id: 'card-id-13',
-            boardId: 'board-id-01',
-            columnId: 'column-id-03',
-            title: 'Title of card 13',
-            description: null,
-            cover: null,
-            memberIds: [],
-            comments: [],
-            attachments: []
           }
         ]
       }
