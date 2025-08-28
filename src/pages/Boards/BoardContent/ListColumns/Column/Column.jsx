@@ -19,6 +19,8 @@ import AddCardIcon from '@mui/icons-material/AddCard'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 function Column({ column }) {
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
@@ -30,9 +32,21 @@ function Column({ column }) {
   const handleClose = () => {
     setAnchorEl(null)
   }
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
+      id: column._id,
+      data: { ...column }
+    })
+  const dndKitColumnStyles = {
+    touchAction: 'none',
+    transform: CSS.Translate.toString(transform),
+    transition
+  }
 
   return (
     <Box
+      ref={setNodeRef}
+      style={dndKitColumnStyles}
       sx={{
         minWidth: '300px',
         maxWidth: '300px',
@@ -147,7 +161,11 @@ function Column({ column }) {
       >
         <Button startIcon={<AddCardIcon />}>Add new card</Button>
         <Tooltip title="Drag to move">
-          <DragHandleIcon sx={{ cursor: 'pointer' }} />
+          <DragHandleIcon
+            sx={{ cursor: 'pointer' }}
+            {...attributes}
+            {...listeners}
+          />
         </Tooltip>
       </Box>
     </Box>
