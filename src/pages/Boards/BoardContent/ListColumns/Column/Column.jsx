@@ -7,6 +7,7 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
+import { mapOrder } from '~/utils/sorts'
 
 import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -19,7 +20,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
 
-function Column() {
+function Column({ column }) {
+  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -59,7 +61,7 @@ function Column() {
             cursor: 'pointer'
           }}
         >
-          Column Title
+          {column?.title}
         </Typography>
         <Box>
           <Tooltip title="More options">
@@ -101,7 +103,7 @@ function Column() {
               <ListItemIcon>
                 <ContentCopyIcon fontSize="small" />
               </ListItemIcon>
-              <ListItemText>Coppy</ListItemText>
+              <ListItemText>Copy</ListItemText>
               <Typography variant="body2" color="text.secondary">
                 ⌘C
               </Typography>
@@ -132,7 +134,7 @@ function Column() {
         </Box>
       </Box>
 
-      <ListCards />
+      <ListCards cards={orderedCards} />
 
       <Box
         sx={{
