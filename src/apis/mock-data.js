@@ -155,7 +155,7 @@ export const mockData = {
         _id: 'column-id-03',
         boardId: 'board-id-01',
         title: 'Done Column 03',
-        cardOrderIds: ['card-id-11', 'card-id-12', 'card-id-13'],
+        cardOrderIds: ['card-id-11', 'card-id-12'],
         cards: [
           {
             _id: 'card-id-11',
