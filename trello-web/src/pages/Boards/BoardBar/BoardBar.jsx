@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import VpnLockIcon from '@mui/icons-material/VpnLock'
+import PublicIcon from '@mui/icons-material/Public'
 import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import BoltIcon from '@mui/icons-material/Bolt'
 import FilterListIcon from '@mui/icons-material/FilterList'
@@ -27,6 +28,11 @@ const MENU_STYLES = {
 }
 
 function BoardBar({ board }) {
+  const typeBoard = board?.type
+  let iconType
+  if (typeBoard === 'public') {iconType = <PublicIcon /> }
+  else { iconType = <VpnLockIcon />}
+  
   return (
     <Box
       sx={{
@@ -55,7 +61,7 @@ function BoardBar({ board }) {
         </Tooltip>
         <Chip
           sx={MENU_STYLES}
-          icon={<VpnLockIcon />}
+          icon={iconType}
           label={capitalizeFirstLetter(board?.type)}
           clickable
         />
