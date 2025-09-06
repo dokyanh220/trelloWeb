@@ -6,8 +6,8 @@ import { mapOrder } from '~/utils/sorts'
 import {
   DndContext,
   PointerSensor,
-  MouseSensor,
-  TouchSensor,
+  // MouseSensor,
+  // TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -16,6 +16,7 @@ import {
   closestCorners,
   getFirstCollision
 } from '@dnd-kit/core'
+import { MouseSensor, TouchSensor } from '~/customLibararies/dndkitsensors'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
@@ -36,7 +37,18 @@ function BoardContent({ board }) {
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: { delay: 250, tolerance: 500 }
   })
-  const sensors = useSensors(pointerSensor, mouseSensor, touchSensor)
+  const pointSensor = useSensors(pointerSensor)
+  const sensors = useSensors( mouseSensor, touchSensor)
+
+  // // Yêu cầu chuột di chuyển 10px thì mới kích hoạt event, fix trường hợp click bị gọi event
+  // const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
+
+  // // Nhấn giữ 250ms và dung sai của cảm ứng 500px thì mới kích hoạt event
+  // const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 500 } })
+
+  // // Ưu tiên sử dụng kết hợp 2 loại sensors là mouse và touch để có trải nghiệm trên mobile tốt nhất, không bị bug.
+  // const sensors = useSensors(mouseSensor, touchSensor)
+
   const [orderedColumns, setOrderedColumns] = useState([])
 
   const [activeDragItemId, setActiveDragItemId] = useState(null)
@@ -300,6 +312,7 @@ function BoardContent({ board }) {
   return (
     <DndContext
       sensors={sensors}
+      pointerSensor={pointSensor}
       // collisionDetection={closestCorners}
       collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}

@@ -199,7 +199,9 @@ function Column({ column }) {
               display: 'flex',
               alignItems: 'center',
               gap: 1
-            }}>
+            }}
+            data-no-dnd="true"
+            >
               <TextField
                 label="Enter card title..."
                 type="text"
@@ -229,6 +231,7 @@ function Column({ column }) {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Button
                   onClick={addNewCard}
+                  data-no-dnd="true"
                   variant="contained" color="success" size="small"
                   sx={{
                     boxShadow: 'none',
@@ -239,8 +242,9 @@ function Column({ column }) {
                 >Add</Button>
                 <CloseIcon
                   fontSize="small"
+                  data-no-dnd="true"
                   sx={{
-                    color: 'white',
+                    color: 'error',
                     cursor: 'pointer',
                     '&:hover': { color: (theme) => theme.palette.error.main }
                   }}
@@ -249,7 +253,7 @@ function Column({ column }) {
               </Box>
             </Box>
           }
-          </Box>
+        </Box>
       </Box>
     </div>
   )
