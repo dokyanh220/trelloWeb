@@ -23,17 +23,21 @@ import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { toast } from 'react-toastify'
 
 function Column({ column }) {
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
-  const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
+  const toggleOpenNewCardForm = () => {
+    setNewCardTitle('')
+    setOpenNewCardForm(!openNewCardForm)
+  }
 
   const [newCardTitle, setNewCardTitle] = useState('')
   const addNewCard = () => {
     if (!newCardTitle) {
-      console.error('Empty title')
+      toast.warn('Empty card title')
       return
     }
     console.log(newCardTitle)

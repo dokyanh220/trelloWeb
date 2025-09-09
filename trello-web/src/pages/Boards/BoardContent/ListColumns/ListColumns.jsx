@@ -1,24 +1,26 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Column from './Column/Column'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
-import CloseIcon from '@mui/icons-material/Close'
 import {
   SortableContext,
   horizontalListSortingStrategy
 } from '@dnd-kit/sortable'
-import { LocalHospital } from '@mui/icons-material'
 
 function ListColumns({ columns }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
-  const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
+  const toggleOpenNewColumnForm = () => {
+    setNewColumnTitle('')
+    setOpenNewColumnForm(!openNewColumnForm)
+  }
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const addNewColumn = () => {
     if (!newColumnTitle) {
-      console.error('Empty title')
+      toast.warn('Empty column title')
       return
   }
     console.log(newColumnTitle)
