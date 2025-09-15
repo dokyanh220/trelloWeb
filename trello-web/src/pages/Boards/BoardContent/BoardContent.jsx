@@ -31,7 +31,8 @@ function BoardContent({
   createNewColumn,
   createNewCard,
   moveColumns,
-  moveCardInTheSameColumn
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumn
 }) {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 10 }
@@ -82,7 +83,7 @@ function BoardContent({
   const [activeDragItemId, setActiveDragItemId] = useState(null)
   const [activeDragItemType, setActiveDragItemType] = useState(null)
   const [activeDragItemData, setActiveDragItemData] = useState(null)
-  const [oldColumnDraggingCard, setOldColumnDraggingCard] = useState(null)
+  const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null)
 
   const lastOverId = useRef(null)
 
@@ -99,7 +100,8 @@ function BoardContent({
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns((prevColumns) => {
       const overCardIndex = overColumn?.cards?.findIndex(
@@ -155,6 +157,17 @@ function BoardContent({
         )
       }
 
+      if (triggerFrom === 'handleDragEnd') {
+        // Phải dùng tới activeDragItemData.columnId hoặc tốt nhất là oldColumnWhenDraggingCard._id (set vào state từ bước handleDragStart) 
+        // chứ không phải activeData trong scope handleDragEnd này vì sau khi đi qua onDragOver và tới đây là state của card đã bị cập nhật một lần rồi.
+        moveCardToDifferentColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        )
+      }
+
       return nextColumns
     })
   }
@@ -174,7 +187,7 @@ function BoardContent({
     setActiveDragItemData(e?.active?.data?.current)
 
     if (e?.active?.data?.current?.columnId) {
-      setOldColumnDraggingCard(findColumnByCardId(e?.active?.id))
+      setOldColumnWhenDraggingCard(findColumnByCardId(e?.active?.id))
     }
   }
 
@@ -207,7 +220,8 @@ function BoardContent({
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
     }
   }
@@ -229,7 +243,7 @@ function BoardContent({
       if (!activeColumn || !overColumn) return
 
       // Hành động kéo thả card khác column, else thì ngược lại
-      if (oldColumnDraggingCard._id !== overColumn._id) {
+      if (oldColumnWhenDraggingCard._id !== overColumn._id) {
         moveCardBetweenDifferentColumns (
           overColumn,
           overCardId,
@@ -237,10 +251,11 @@ function BoardContent({
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
-        const oldCardIndex = oldColumnDraggingCard?.cards?.findIndex(
+        const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(
           (card) => card._id === activeDragItemId
         )
         console.log('OCI: ', oldCardIndex)
@@ -249,7 +264,7 @@ function BoardContent({
         )
         console.log('NCI: ', newCardIndex)
         const dndOrderedCards = arrayMove(
-          oldColumnDraggingCard?.cards,
+          oldColumnWhenDraggingCard?.cards,
           oldCardIndex,
           newCardIndex
         )
@@ -268,7 +283,7 @@ function BoardContent({
           return nextColumns
         })
 
-        moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnDraggingCard._id)
+        moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id)
       }
     }
 
@@ -296,7 +311,7 @@ function BoardContent({
     setActiveDragItemId(null)
     setActiveDragItemType(null)
     setActiveDragItemData(null)
-    setOldColumnDraggingCard(null)
+    setOldColumnWhenDraggingCard(null)
   }
 
   const customDropAnimation = {
