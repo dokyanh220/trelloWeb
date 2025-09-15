@@ -31,7 +31,8 @@ function BoardContent({
   createNewColumn,
   createNewCard,
   moveColumns,
-  moveCardInTheSameColumn
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumn
 }) {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 10 }
@@ -99,7 +100,8 @@ function BoardContent({
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns((prevColumns) => {
       const overCardIndex = overColumn?.cards?.findIndex(
@@ -155,6 +157,15 @@ function BoardContent({
         )
       }
 
+      if (triggerFrom === 'handleDragEnd') {
+        moveCardToDifferentColumn(
+          activeDraggingCardId,
+          oldColumnDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        )
+      }
+
       return nextColumns
     })
   }
@@ -207,7 +218,8 @@ function BoardContent({
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
     }
   }
@@ -237,17 +249,12 @@ function BoardContent({
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
-        const oldCardIndex = oldColumnDraggingCard?.cards?.findIndex(
-          (card) => card._id === activeDragItemId
-        )
-        console.log('OCI: ', oldCardIndex)
-        const newCardIndex = overColumn?.cards?.findIndex(
-          (card) => card._id === overCardId
-        )
-        console.log('NCI: ', newCardIndex)
+        const oldCardIndex = oldColumnDraggingCard?.cards?.findIndex((card) => card._id === activeDragItemId)
+        const newCardIndex = overColumn?.cards?.findIndex((card) => card._id === overCardId)
         const dndOrderedCards = arrayMove(
           oldColumnDraggingCard?.cards,
           oldCardIndex,

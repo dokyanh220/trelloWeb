@@ -8,7 +8,8 @@ import {
   createNewColumnApi,
   createNewCardApi,
   updateBoardDetailsAPI,
-  updateColumnDetailsAPI
+  updateColumnDetailsAPI,
+  moveCardToDifferentColumnAPI
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
@@ -17,6 +18,7 @@ import RedesignedLinearProgress from '~/components/ModeSelect/RedesignedLinearPr
 
 function Board() {
   const [board, setBoard] = useState(null)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     // hard code id của board
@@ -86,15 +88,41 @@ function Board() {
     }
     setBoard(newBoard)
 
-    // updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+    updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
   }
 
-  const [progress, setProgress] = useState(10)
+  const moveCardToDifferentColumn = (currentCardId, prevColumnId, nextColumnId, dndOrderedColumns) => {
+    const newBoard = { ...board }
+    const dndOrderedColumnIds = dndOrderedColumns.map(column => column._id)
+    newBoard.column = dndOrderedColumns
+    newBoard.columnOrderIds = dndOrderedColumnIds
+    setBoard(newBoard)
+
+    moveCardToDifferentColumnAPI({
+      currentCardId,
+      prevColumnId,
+      prevCardOrderIds: dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds,
+      nextColumnId,
+      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
+    })
+  }
 
   useEffect(() => {
+    // Đặt một bộ đếm thời gian
     const timer = setInterval(() => {
-      setProgress((prevProgress) => (prevProgress >= 100 ? 10 : prevProgress + 10))
-    }, 800)
+      // Cập nhật giá trị progress
+      setProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          clearInterval(timer) // Dừng timer khi đạt 100%
+          return 100
+        }
+        // Mỗi lần cập nhật, tăng thêm 10
+        return prevProgress + 10
+      })
+    }, 800) // Thời gian giữa mỗi lần cập nhật (tính bằng ms)
+
+    // Hàm dọn dẹp: sẽ được gọi khi component bị unmount
+    // Rất quan trọng để tránh rò rỉ bộ nhớ
     return () => {
       clearInterval(timer)
     }
@@ -121,6 +149,7 @@ function Board() {
         createNewCard={createNewCard}
         moveColumns={moveColumns}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
+        moveCardToDifferentColumn={moveCardToDifferentColumn}
       />
     </Container>
   )
