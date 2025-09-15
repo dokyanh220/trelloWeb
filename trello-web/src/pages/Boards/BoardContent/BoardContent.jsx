@@ -31,7 +31,8 @@ function BoardContent({
   board,
   createNewColumn,
   createNewCard,
-  moveColumns
+  moveColumns,
+  moveCardInTheSameColumn
 }) {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 10 }
@@ -204,6 +205,7 @@ function BoardContent({
       // console.log(overColumn)
       if (!activeColumn || !overColumn) return
 
+      // Hành động kéo thả card khác column, else thì ngược lại
       if (oldColumnDraggingCard._id !== overColumn._id) {
         moveCardBetweenDifferentColumns (
           overColumn,
@@ -228,6 +230,7 @@ function BoardContent({
         )
         const dndOrderedCardIds = dndOrderedCards.map((card) => card._id)
 
+        // Update state tránh flickering
         setOrderedColumns((prevColumns) => {
           const nextColumns = cloneDeep(prevColumns)
           const targetColumn = nextColumns.find(
@@ -239,6 +242,8 @@ function BoardContent({
 
           return nextColumns
         })
+
+        moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnDraggingCard._id)
       }
     }
 
@@ -279,39 +284,52 @@ function BoardContent({
     })
   }
 
+  // thuật toán phát hiện va chạm tối ưu cho việc kéo thả card giữa nhiều columns
   // args(arguments) Các đối số, tham số
-  const collisionDetectionStrategy = useCallback(
-    (args) => {
-      if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
-        return closestCorners({ ...args })
+  const collisionDetectionStrategy = useCallback((args) => {
+    // Trường hợp kéo column thì dùng thuật toán closestCorners
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      return closestCorners({ ...args })
+    }
+
+    // Tìm các điểm giao nhau, va chạm, trả về một mảng các va chạm - intersections với con trỏ
+    const pointerIntersections = pointerWithin(args)
+
+    // Fix bug flickering của thư viện Dnd-kit trong trường hợp sau:
+    // Kéo một cái card có image cover lớn và kéo lên phía trên cùng ra khỏi khu vực kéo thả
+    // Nếu pointerIntersections là mảng rỗng, return luôn không làm gì hết.
+    if (!pointerIntersections?.length) return
+
+    // Thuật toán phát hiện va chạm sẽ trả về một mảng các va chạm ở đây
+    // const intersections = !!pointerIntersections?.length
+    //   ? pointerIntersections
+    //   : rectIntersection(args)
+
+    // Tìm overId đầu tiên trong đám pointerIntersections ở trên
+    let overId = getFirstCollision(pointerIntersections, 'id')
+    if (overId) {
+      // Nếu cái over nó là column thì sẽ tìm tới cái cardId gần nhất bên trong khu vực va chạm đó dựa vào thuật toán phát hiện va chạm
+      // closestCenter hoặc closestCorners đều được. Tuy nhiên ở đây dùng closestCorners mình thấy mượt mà hơn.
+      // Nếu không có đoạn checkColumn này thì bug flickering vẫn fix đc rồi nhưng mà kéo thả sẽ rất giật giật lag.
+      const checkColumn = orderedColumns.find(column => column._id === overId)
+      if (checkColumn) {
+        // console.log('overId before: ', overId)
+        overId = closestCorners({
+          ...args,
+          droppableContainers: args.droppableContainers.filter(container => {
+            return (container.id !== overId) && (checkColumn?.cardOrderIds?.includes(container.id))
+          })
+        })[0]?.id
+        // console.log('overId after: ', overId)
       }
-      const pointerIntersection = pointerWithin(args)
 
-      if (!pointerIntersection?.length) return
+      lastOverId.current = overId
+      return [{ id: overId }]
+    }
 
-      // const intersections = !!pointerIntersection?.length
-      //   ? pointerIntersection
-      //   : rectIntersection(args)
-
-      let overId = getFirstCollision(pointerIntersection, 'id')
-
-      if (overId) {
-        const checkColumn = orderedColumns.find(column => column._id === overId)
-
-        if (checkColumn) {
-          overId = closestCorners({
-            ...args,
-            droppableContainers: args.droppableContainers.filter(
-              container => container.id !== overId && checkColumn?.cardOrderIds?.includes(container.id))
-          })[0]?.id
-        }
-
-        lastOverId.current = overId
-        return [{ id: overId }]
-      }
-
-      return lastOverId.current ? [{ id: lastOverId.current }] : []
-    }, [activeDragItemType, orderedColumns])
+    // Nếu overId là null thì trả về mảng rỗng - tránh bug crash trang
+    return lastOverId.current ? [{ id: lastOverId.current }] : []
+  }, [activeDragItemType, orderedColumns])
 
   return (
     <DndContext
