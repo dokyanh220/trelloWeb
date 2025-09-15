@@ -44,33 +44,18 @@ const findOneById = async (id) => {
 
 const update = async (cardId, updateData) => {
   try {
-<<<<<<< HEAD
-    // Lọc những field mà chúng ta không cho phép cập nhật linh tinh
-    Object.keys(updateData).forEach(fieldName => {
-      if (INVALI_UPDATE_FIELDS.includes(fieldName)) {
-        delete updateData[fieldName]
-      }
-    })
-
-    // Đối với những dữ liệu liên quan ObjectId, biến đổi ở đây
-=======
     Object.keys(updateData).forEach(feildName => {
       if (INVALI_UPDATE_FIELDS.includes(feildName)) {
         delete updateData[feildName]
       }
     })
 
->>>>>>> f1199e641ab432e319118c754b5eb046fefdd163
     if (updateData.columnId) updateData.columnId = new ObjectId(updateData.columnId)
 
     const result = await GET_DB().collection(CARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(cardId) },
       { $set: updateData },
-<<<<<<< HEAD
-      { returnDocument: 'after' } // sẽ trả về kết quả mới sau khi cập nhật
-=======
       { returnDocument: 'after' }
->>>>>>> f1199e641ab432e319118c754b5eb046fefdd163
     )
     return result
   } catch (error) { throw new Error(error) }

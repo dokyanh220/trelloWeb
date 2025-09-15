@@ -158,17 +158,9 @@ function BoardContent({
       }
 
       if (triggerFrom === 'handleDragEnd') {
-<<<<<<< HEAD
-        // Phải dùng tới activeDragItemData.columnId hoặc tốt nhất là oldColumnWhenDraggingCard._id (set vào state từ bước handleDragStart) 
-        // chứ không phải activeData trong scope handleDragEnd này vì sau khi đi qua onDragOver và tới đây là state của card đã bị cập nhật một lần rồi.
         moveCardToDifferentColumn(
           activeDraggingCardId,
           oldColumnWhenDraggingCard._id,
-=======
-        moveCardToDifferentColumn(
-          activeDraggingCardId,
-          oldColumnDraggingCard._id,
->>>>>>> f1199e641ab432e319118c754b5eb046fefdd163
           nextOverColumn._id,
           nextColumns
         )
@@ -261,19 +253,8 @@ function BoardContent({
           'handleDragEnd'
         )
       } else {
-<<<<<<< HEAD
-        const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(
-          (card) => card._id === activeDragItemId
-        )
-        console.log('OCI: ', oldCardIndex)
-        const newCardIndex = overColumn?.cards?.findIndex(
-          (card) => card._id === overCardId
-        )
-        console.log('NCI: ', newCardIndex)
-=======
-        const oldCardIndex = oldColumnDraggingCard?.cards?.findIndex((card) => card._id === activeDragItemId)
+        const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex((card) => card._id === activeDragItemId)
         const newCardIndex = overColumn?.cards?.findIndex((card) => card._id === overCardId)
->>>>>>> f1199e641ab432e319118c754b5eb046fefdd163
         const dndOrderedCards = arrayMove(
           oldColumnWhenDraggingCard?.cards,
           oldCardIndex,
