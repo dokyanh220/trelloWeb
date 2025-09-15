@@ -70,7 +70,7 @@ function AppBar() {
             variant="outlined"
             startIcon={<LibraryAddIcon />}
           >
-            Create
+            New Board
           </Button>
         </Box>
       </Box>

@@ -20,13 +20,23 @@ const createNew = async (req, res, next) => {
 const getDetails = async (req, res, next) => {
   try {
     const boardId = req.params.id
+    // Sau này ở khóa MERN Stack Advance nâng cao học trực tiếp sẽ có thêm userId nữa để chỉ lấy board thuộc về user đó thôi chẳng hạn...vv
     const board = await boardService.getDetails(boardId)
-
     res.status(StatusCodes.OK).json(board)
+  } catch (error) { next(error) }
+}
+
+const update = async (req, res, next) => {
+  try {
+    const boardId = req.params.id
+    const updatedBoard = await boardService.update(boardId, req.body)
+
+    res.status(StatusCodes.OK).json(updatedBoard)
   } catch (error) { next(error) }
 }
 
 export const boardController = {
   createNew,
-  getDetails
+  getDetails,
+  update
 }

@@ -10,7 +10,7 @@ import {
   horizontalListSortingStrategy
 } from '@dnd-kit/sortable'
 
-function ListColumns({ columns }) {
+function ListColumns({ columns, createNewColumn, createNewCard }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => {
     setNewColumnTitle('')
@@ -18,12 +18,16 @@ function ListColumns({ columns }) {
   }
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.warn('Empty column title')
       return
-  }
-    console.log(newColumnTitle)
+    }
+    const newColumnData = {
+      title: newColumnTitle
+    }
+
+    await createNewColumn(newColumnData)
 
     toggleOpenNewColumnForm()
     setNewColumnTitle('')
@@ -45,7 +49,7 @@ function ListColumns({ columns }) {
           '&::-webkit-scrollbar-track': { m: 0 }
         }}
       >
-        {columns?.map((column) => <Column key={column._id} column={column} /> )}
+        {columns?.map((column) => <Column key={column._id} column={column} createNewCard={createNewCard} /> )}
 
         {!openNewColumnForm
           ? <Box onClick={toggleOpenNewColumnForm} sx={{
