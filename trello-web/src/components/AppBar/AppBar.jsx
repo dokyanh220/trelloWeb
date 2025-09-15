@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
 import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -23,9 +23,32 @@ import CloseIcon from '@mui/icons-material/Close'
 
 function AppBar() {
   const [searchValue, setSearchValue] = useState('')
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const handleWheel = (e) => {
+      // Ngăn scroll dọc mặc định
+      e.preventDefault()
+      // Scroll ngang dựa vào deltaY (cuộn dọc chuột -> thành cuộn ngang)
+      el.scrollLeft += e.deltaY
+
+      // Nếu có thể cuộn ngang thì chặn mặc định
+      if (el.scrollWidth > el.clientWidth) {
+        e.preventDefault()
+        el.scrollLeft += e.deltaY
+      }
+    }
+
+    el.addEventListener('wheel', handleWheel, { passive: false })
+    return () => el.removeEventListener('wheel', handleWheel)
+  }, [])
 
   return (
     <Box
+      ref={containerRef}
       sx={{
         width: '100%',
         height: (theme) => theme.trello.appBarHeight,
@@ -35,25 +58,14 @@ function AppBar() {
         gap: 2,
         paddingX: 2,
         overflowX: 'auto',
-        bgcolor: (theme) =>
-          theme.palette.mode === 'dark' ? '#2c3e50' : '#1b61b1ff'
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : '#1b61b1ff')
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <AppsIcon sx={{ color: 'white' }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <SvgIcon
-            component={TrelloIcon}
-            fontSize="small"
-            inheritViewBox
-            sx={{ color: 'white' }}
-          />
-          <Typography
-            variant="span"
-            sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}
-          >
-            Trello
-          </Typography>
+          <SvgIcon component={TrelloIcon} fontSize="small" inheritViewBox sx={{ color: 'white' }} />
+          <Typography variant="span" sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>Trello</Typography>
         </Box>
 
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
@@ -73,6 +85,7 @@ function AppBar() {
             New Board
           </Button>
         </Box>
+
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -93,10 +106,7 @@ function AppBar() {
               <InputAdornment position="end">
                 <CloseIcon
                   fontSize="small"
-                  sx={{
-                    color: searchValue ? 'white' : 'transparent',
-                    cursor: 'pointer'
-                  }}
+                  sx={{ color: searchValue ? 'white' : 'transparent', cursor: 'pointer' }}
                   onClick={() => setSearchValue('')}
                 />
               </InputAdornment>
@@ -116,9 +126,7 @@ function AppBar() {
           }}
         />
 
-        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <ModeSelect />
-        </Box>
+        <ModeSelect />
 
         <Tooltip title="Notifications">
           <Badge color="warning" variant="dot" sx={{ cursor: 'pointer' }}>
@@ -131,6 +139,7 @@ function AppBar() {
         </Tooltip>
 
         <Profiles />
+
       </Box>
     </Box>
   )

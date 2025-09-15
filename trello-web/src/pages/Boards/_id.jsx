@@ -77,7 +77,7 @@ function Board() {
     }
     setBoard(newBoard)
 
-    updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+    // updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
   }
 
   return (

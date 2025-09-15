@@ -12,6 +12,7 @@ import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { capitalizeFirstLetter } from '~/utils/formatters'
+import { useEffect, useRef } from 'react'
 
 const MENU_STYLES = {
   color: 'white',
@@ -32,9 +33,33 @@ function BoardBar({ board }) {
   let iconType
   if (typeBoard === 'public') {iconType = <PublicIcon /> }
   else { iconType = <VpnLockIcon />}
-  
+
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const handleWheel = (e) => {
+      // Ngăn scroll dọc mặc định
+      e.preventDefault()
+      // Scroll ngang dựa vào deltaY (cuộn dọc chuột -> thành cuộn ngang)
+      el.scrollLeft += e.deltaY
+
+      // Nếu có thể cuộn ngang thì chặn mặc định
+      if (el.scrollWidth > el.clientWidth) {
+        e.preventDefault()
+        el.scrollLeft += e.deltaY
+      }
+    }
+
+    el.addEventListener('wheel', handleWheel, { passive: false })
+    return () => el.removeEventListener('wheel', handleWheel)
+  }, [])
+
   return (
     <Box
+      ref={containerRef}
       sx={{
         width: '100%',
         height: (theme) => theme.trello.boardBarHeight,

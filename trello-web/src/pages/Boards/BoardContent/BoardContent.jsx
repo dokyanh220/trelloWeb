@@ -46,6 +46,29 @@ function BoardContent({
   const pointSensor = useSensors(pointerSensor)
   const sensors = useSensors( mouseSensor, touchSensor)
 
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const handleWheel = (e) => {
+      // Ngăn scroll dọc mặc định
+      e.preventDefault()
+      // Scroll ngang dựa vào deltaY (cuộn dọc chuột -> thành cuộn ngang)
+      el.scrollLeft += e.deltaY
+
+      // Nếu có thể cuộn ngang thì chặn mặc định
+      if (el.scrollWidth > el.clientWidth) {
+        e.preventDefault()
+        el.scrollLeft += e.deltaY
+      }
+    }
+
+    el.addEventListener('wheel', handleWheel, { passive: false })
+    return () => el.removeEventListener('wheel', handleWheel)
+  }, [])
+
   // // Yêu cầu chuột di chuyển 10px thì mới kích hoạt event, fix trường hợp click bị gọi event
   // const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
 
@@ -342,13 +365,16 @@ function BoardContent({
       onDragEnd={handleDragEnd}
     >
       <Box
+        ref={containerRef}
         sx={{
           bgcolor: (theme) =>
             theme.palette.mode === 'dark' ? '#34495e' : '#19764d2',
           width: '100%',
           height: (theme) =>
             `calc(100vh - ${theme.trello.boardBarHeight} - ${theme.trello.appBarHeight})`,
-          p: '10px 0'
+          p: '10px 0',
+          overflowX: 'auto',
+          overflowY: 'hidden'
         }}
       >
         <ListColumns
