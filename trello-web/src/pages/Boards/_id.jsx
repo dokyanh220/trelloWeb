@@ -1,4 +1,4 @@
-import { Container } from '@mui/material'
+import { Box, Container } from '@mui/material'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
@@ -12,18 +12,27 @@ import {
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
+import { mapOrder } from '~/utils/sorts'
+import RedesignedLinearProgress from '~/components/ModeSelect/RedesignedLinearProgress'
 
 function Board() {
   const [board, setBoard] = useState(null)
 
   useEffect(() => {
+    // hard code id của board
     const boardId = '68bb441840a03db8a35c25b4'
 
     fecthBoardDetailsAPI(boardId).then((board) => {
+      // sắp xếp thứ tự column trước khi gửi dữ liệu cho các components
+      board.column = mapOrder(board?.columns, board?.columnOrderIds, '_id')
+
       board.columns.forEach(column => {
         if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)]
           column.cardOrderIds = [generatePlaceholderCard(column)._id]
+        } else {
+          // sắp xếp thứ tự cards trước khi gửi dữ liệu cho components
+          column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
       setBoard(board)
@@ -78,6 +87,24 @@ function Board() {
     setBoard(newBoard)
 
     // updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+  }
+
+  const [progress, setProgress] = useState(10)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => (prevProgress >= 100 ? 10 : prevProgress + 10))
+    }, 800)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+  if (!board) {
+    return (
+      <Box sx={{ width: '100%' }}>
+        <RedesignedLinearProgress value={progress} />
+      </Box>
+    )
   }
 
   return (

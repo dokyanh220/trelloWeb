@@ -8,7 +8,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import { mapOrder } from '~/utils/sorts'
 
 import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -26,7 +25,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 
 function Column({ column, createNewCard }) {
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+  // column đã được sắp xếp ở component cấp cao nhất(boards/_id.jsx:33)
+  const orderedCards = column?.cards
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => {

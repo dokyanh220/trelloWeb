@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { cloneDeep, isEmpty } from 'lodash'
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
-import { mapOrder } from '~/utils/sorts'
 import {
   DndContext,
   PointerSensor,
@@ -161,7 +160,8 @@ function BoardContent({
   }
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    // column đã được sắp xếp ở component cấp cao nhất(boards/_id.jsx:26)
+    setOrderedColumns(board?.columns)
   }, [board])
 
   const handleDragStart = (e) => {
@@ -243,9 +243,11 @@ function BoardContent({
         const oldCardIndex = oldColumnDraggingCard?.cards?.findIndex(
           (card) => card._id === activeDragItemId
         )
+        console.log('OCI: ', oldCardIndex)
         const newCardIndex = overColumn?.cards?.findIndex(
           (card) => card._id === overCardId
         )
+        console.log('NCI: ', newCardIndex)
         const dndOrderedCards = arrayMove(
           oldColumnDraggingCard?.cards,
           oldCardIndex,
