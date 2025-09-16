@@ -1,4 +1,4 @@
-import { Box, Container } from '@mui/material'
+import { Box, CircularProgress, Container, Typography } from '@mui/material'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
@@ -14,11 +14,9 @@ import {
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
 import { mapOrder } from '~/utils/sorts'
-import RedesignedLinearProgress from '~/components/ModeSelect/RedesignedLinearProgress'
 
 function Board() {
   const [board, setBoard] = useState(null)
-  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     // hard code id của board
@@ -63,9 +61,17 @@ function Board() {
     const newBoard = { ...board }
     const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
     if (columnToUpdate) {
-      columnToUpdate.cards.push(createdCard)
-      columnToUpdate.cardOrderIds.push(createdCard._id)
+      // Nếu column rỗng sẽ tạo ra 1 placeholderCard
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+        columnToUpdate.cardOrderIds = [createdCard._id]
+      } else {
+        // Ngược lại column đã có data thì push ở cuối mảng
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+      }
     }
+    console.log('🚀 ~ createNewCard ~ columnToUpdate:', columnToUpdate)
     setBoard(newBoard)
   }
 
@@ -98,39 +104,30 @@ function Board() {
     newBoard.columnOrderIds = dndOrderedColumnIds
     setBoard(newBoard)
 
+    let prevCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
+    if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
+
     moveCardToDifferentColumnAPI({
       currentCardId,
       prevColumnId,
-      prevCardOrderIds: dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds,
+      prevCardOrderIds,
       nextColumnId,
       nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
     })
   }
 
-  useEffect(() => {
-    // Đặt một bộ đếm thời gian
-    const timer = setInterval(() => {
-      // Cập nhật giá trị progress
-      setProgress((prevProgress) => {
-        if (prevProgress >= 100) {
-          clearInterval(timer) // Dừng timer khi đạt 100%
-          return 100
-        }
-        // Mỗi lần cập nhật, tăng thêm 10
-        return prevProgress + 10
-      })
-    }, 800) // Thời gian giữa mỗi lần cập nhật (tính bằng ms)
-
-    // Hàm dọn dẹp: sẽ được gọi khi component bị unmount
-    // Rất quan trọng để tránh rò rỉ bộ nhớ
-    return () => {
-      clearInterval(timer)
-    }
-  }, [])
   if (!board) {
     return (
-      <Box sx={{ width: '100%' }}>
-        <RedesignedLinearProgress value={progress} />
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+        width: '100vw',
+        height: '100vh'
+      }}>
+        <CircularProgress color='primary' size='2.4rem' />
+        <Typography variant='h5' >Loading...</Typography>
       </Box>
     )
   }

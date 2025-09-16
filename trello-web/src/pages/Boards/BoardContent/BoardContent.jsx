@@ -150,7 +150,7 @@ function BoardContent({
           activeDraggingCardData
         )
 
-        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_placeholderCard)
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
 
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(
           (card) => card._id

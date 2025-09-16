@@ -167,7 +167,7 @@ export const mockData = {
             memberIds: [],
             comments: [],
             attachments: [],
-            FE_placeholderCard: true
+            FE_PlaceholderCard: true
           }
         ]
       },
