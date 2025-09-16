@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-     "dev": "start cmd /k \"npm run dev --prefix trello-api\" & start cmd /k \"npm run dev --prefix trello-web\""
+     "dev": "start cmd /k \"npm run dev --prefix api\" & start cmd /k \"npm run dev --prefix web\""
   },
   "keywords": [],
   "author": "",
