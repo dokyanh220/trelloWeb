@@ -37,6 +37,7 @@ function Board() {
           column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
+
       setBoard(board)
     })
   }, [])
