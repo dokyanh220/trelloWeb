@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { cloneDeep, isEmpty } from 'lodash'
-import Box from '@mui/material/Box'
+import { Box } from '@mui/material'
 import ListColumns from './ListColumns/ListColumns'
 import {
   DndContext,
@@ -28,12 +28,9 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 function BoardContent({
   board,
-  createNewColumn,
-  createNewCard,
   moveColumns,
   moveCardInTheSameColumn,
-  moveCardToDifferentColumn,
-  deleteColumnDetails
+  moveCardToDifferentColumn
 }) {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 10 }
@@ -378,7 +375,7 @@ function BoardContent({
         ref={containerRef}
         sx={{
           bgcolor: (theme) =>
-            theme.palette.mode === 'dark' ? '#34495e' : '#19764d2',
+            theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
           width: '100%',
           height: (theme) =>
             `calc(100vh - ${theme.trello.boardBarHeight} - ${theme.trello.appBarHeight})`,
@@ -389,9 +386,6 @@ function BoardContent({
       >
         <ListColumns
           columns={orderedColumns}
-          createNewColumn={createNewColumn}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
         />
         <DragOverlay dropAnimation={customDropAnimation}>
           {!activeDragItemType && null}

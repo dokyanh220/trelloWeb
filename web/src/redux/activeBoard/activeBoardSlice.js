@@ -45,7 +45,7 @@ export const activeBoardSlice = createSlice({
       let board = action.payload
 
       // sắp xếp thứ tự column trước khi gửi dữ liệu cho các components
-      board.column = mapOrder(board?.columns, board?.columnOrderIds, '_id')
+      board.columns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
 
       board.columns.forEach(column => {
         if (isEmpty(column.cards)) {

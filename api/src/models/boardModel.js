@@ -21,7 +21,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   _destroy: Joi.boolean().default(false)
 })
 
-const INVALI_UPDATE_FIELDS = ['_id', 'createAt']
+const INVALID_UPDATE_FIELDS = ['_id', 'createAt']
 
 const validateBeforeCreate = async (data) => {
   return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
@@ -84,7 +84,7 @@ const pushColumnOrderIds = async (column) => {
 const update = async (boardId, updateData) => {
   try {
     Object.keys(updateData).forEach(feildName => {
-      if (INVALI_UPDATE_FIELDS.includes(feildName)) {
+      if (INVALID_UPDATE_FIELDS.includes(feildName)) {
         delete updateData[feildName]
       }
     })

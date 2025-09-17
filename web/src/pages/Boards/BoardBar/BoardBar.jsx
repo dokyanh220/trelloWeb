@@ -1,4 +1,4 @@
-import Box from '@mui/material/Box'
+import { Box } from '@mui/material'
 import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
@@ -53,7 +53,7 @@ function BoardBar({ board }) {
       }
     }
 
-    el.addEventListener('wheel', handleWheel, { passive: true })
+    el.addEventListener('wheel', handleWheel)
     return () => el.removeEventListener('wheel', handleWheel)
   }, [])
 
@@ -71,7 +71,6 @@ function BoardBar({ board }) {
         overflowX: 'auto',
         bgcolor: (theme) =>
           theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
-        borderBottom: '1px solid #ffffffb7',
         '&::-webkit-scrollbar-track': { m: 0 }
       }}
     >

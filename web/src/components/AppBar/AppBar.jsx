@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import Box from '@mui/material/Box'
+import { Box } from '@mui/material'
 import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
@@ -42,7 +42,7 @@ function AppBar() {
       }
     }
 
-    el.addEventListener('wheel', handleWheel, { passive: true })
+    el.addEventListener('wheel', handleWheel)
     return () => el.removeEventListener('wheel', handleWheel)
   }, [])
 

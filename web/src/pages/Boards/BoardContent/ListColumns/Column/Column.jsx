@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Box from '@mui/material/Box'
+import { Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -24,8 +24,17 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { createNewCardApi, deleteColumnDetailsAPI } from '~/apis'
+import { cloneDeep } from 'lodash'
+import {
+  selectCurrentActiveBoard,
+  updateCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
-function Column({ column, createNewCard, deleteColumnDetails }) {
+function Column({ column }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
   // column đã được sắp xếp ở component cấp cao nhất(boards/_id.jsx:33)
   const orderedCards = column?.cards
 
@@ -36,7 +45,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
   }
 
   const [newCardTitle, setNewCardTitle] = useState('')
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.warn('Empty card title')
       return
@@ -46,7 +55,27 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       title: newCardTitle,
       columnId: column._id
     }
-    createNewCard(newCardData)
+
+    const createdCard = await createNewCardApi({
+      ...newCardData,
+      boardId: board._id
+    })
+    // const newBoard = { ...board }
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+    if (columnToUpdate) {
+      // Nếu column rỗng: bản chất là đang chứa một cái Placeholder card
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+        columnToUpdate.cardOrderIds = [createdCard._id]
+      } else {
+        // Ngược lại Column đã có data thì push vào cuối mảng
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+      }
+    }
+    // console.log('🚀 ~ createNewCard ~ columnToUpdate:', columnToUpdate)
+    dispatch(updateCurrentActiveBoard(newBoard))
 
     toggleOpenNewCardForm()
     setNewCardTitle('')
@@ -65,7 +94,19 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
     })
       .then(() => {
         document.getElementById('root')?.removeAttribute('aria-hidden')
-        deleteColumnDetails(column._id)
+
+        // Vì đã sử dụng .filter để làm việc, như sử dụng việc .concat sẽ không ảnh hưởng
+        // ctrl + alt + L để console nhé :))
+        // console.log('🚀 ~ deleteColumnDetails ~ columnId:', columnId)
+        const newBoard = { ...board }
+        newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+        newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== column._id)
+        dispatch(updateCurrentActiveBoard(newBoard))
+
+        deleteColumnDetailsAPI(column._id).then(res => {
+          // console.log('🚀 ~ deleteColumnDetails ~ res:', res)
+          toast.success(res?.deleteResult)
+        })
       })
       .catch(() => {document.getElementById('root')?.removeAttribute('aria-hidden')})
   }
