@@ -15,6 +15,7 @@ import {
   moveCardToDifferentColumnAPI
 } from '~/apis'
 import { Box, CircularProgress, Container, Typography } from '@mui/material'
+import { useParams } from 'react-router-dom'
 
 function Board() {
   const dispatch = useDispatch()
@@ -22,12 +23,12 @@ function Board() {
   // const [board, setBoard] = useState(null)
   const board = useSelector(selectCurrentActiveBoard)
 
+  const { boardId } = useParams()
+
   useEffect(() => {
-    // hard code id của board
-    const boardId = '68bb441840a03db8a35c25b4'
     // Call Api
     dispatch(fecthBoardDetailsAPI(boardId))
-  }, [dispatch])
+  }, [dispatch, boardId])
 
   const moveColumns = (dndOrderedColumns) => {
     const dndOrderedColumnIds = dndOrderedColumns.map(c => c._id)
@@ -108,6 +109,7 @@ function Board() {
       <BoardContent
         board={board}
 
+        // Trường hợp kéo thả giữ nguyên để code xử lý kéo thả ở phần BoardContent không bị quá dài mất kiểm soát khi đọc code, maintain.
         moveColumns={moveColumns}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}

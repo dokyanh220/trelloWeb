@@ -3,6 +3,8 @@ import React from 'react'
 import App from '~/App.jsx'
 // Cấu hinh react-dom
 import ReactDOM from 'react-dom/client'
+// Cấu hinh react-router-dom
+import { BrowserRouter, Routes, Route } from 'react-router'
 // Cấu hình MUI
 import CssBaseline from '@mui/material/CssBaseline'
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
@@ -19,20 +21,22 @@ import { store } from '~/redux/store'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <CssVarsProvider theme={theme}>
-        <ConfirmProvider>
-          <CssBaseline />
-          <App />
-          <ToastContainer
-            position="bottom-right"
-            theme="colored"
-            closeOnClick
-            draggable
-            transition={Flip}
-          />
-        </ConfirmProvider>
-      </CssVarsProvider>
-    </Provider>
+    <BrowserRouter basename='/'>
+      <Provider store={store}>
+        <CssVarsProvider theme={theme}>
+          <ConfirmProvider>
+            <CssBaseline />
+            <ToastContainer
+              position="bottom-right"
+              theme="colored"
+              closeOnClick
+              draggable
+              transition={Flip}
+            />
+            <App />
+          </ConfirmProvider>
+        </CssVarsProvider>
+      </Provider>
+    </BrowserRouter>
   </React.StrictMode>
 )

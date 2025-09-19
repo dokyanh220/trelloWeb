@@ -8,6 +8,7 @@ const COLUMN_FOOTER_HEIGHT = '56px'
 
 // Create a theme instance.
 const theme = extendTheme({
+  direction: 'rtl',
   trello: {
     appBarHeight: APP_BAR_HEIGHT,
     boardBarHeight: BOARD_BAR_HEIGHT,
