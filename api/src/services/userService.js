@@ -4,6 +4,8 @@ import { StatusCodes } from 'http-status-codes'
 import { userModel } from '~/models/userModel'
 import ApiError from '~/utils/ApiError'
 import { pickUser } from '~/utils/formatters'
+import { WEBSITE_DOMAIN } from '~/utils/constants'
+import { BrevoProvider } from '~/providers/BrevoProvider'
 
 const createNew = async (reqBody) => {
   try {
@@ -30,6 +32,16 @@ const createNew = async (reqBody) => {
 
     const getNewUser = await userModel.findOneById(createdUser.insertedId)
     // Gửi email xác thực tài khoản
+    const verificationLink = `${WEBSITE_DOMAIN}/account/verification?email=${getNewUser.email}&token=${getNewUser.verifyToken}`
+    const customSubject = 'Trello web: Please verify your email before using our services!'
+    const htmlContent = `
+      <h3>Here is your verification link :</h3>
+      <img src='https://img.thuthuattinhoc.vn/uploads/2019/03/07/thuthuattinhoc-slide-cam-on-dep-1_113240949.jpg' width="500"/>
+      <h3>${verificationLink}</h3>
+      <h3>Sincerely, <br/>- dokyanh-</h3>
+    `
+    await BrevoProvider.sendEmail(getNewUser.email, customSubject, htmlContent)
+
     // Return Controller
     return pickUser(getNewUser)
   } catch (error) { throw error }

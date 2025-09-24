@@ -14,8 +14,8 @@ import {
   updateColumnDetailsAPI,
   moveCardToDifferentColumnAPI
 } from '~/apis'
-import { Box, CircularProgress, Container, Typography } from '@mui/material'
 import { useParams } from 'react-router-dom'
+import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 
 function Board() {
   const dispatch = useDispatch()
@@ -83,19 +83,7 @@ function Board() {
   }
 
   if (!board) {
-    return (
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-        width: '100vw',
-        height: '100vh'
-      }}>
-        <CircularProgress color='primary' size='2.4rem' />
-        <Typography variant='h5' >Loading...</Typography>
-      </Box>
-    )
+    return <PageLoadingSpinner />
   }
 
   return (
