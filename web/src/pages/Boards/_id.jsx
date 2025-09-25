@@ -16,6 +16,7 @@ import {
 } from '~/apis'
 import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
+import Container from '@mui/material/Container'
 
 function Board() {
   const dispatch = useDispatch()

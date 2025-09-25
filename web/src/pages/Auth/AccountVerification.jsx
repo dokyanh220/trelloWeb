@@ -9,14 +9,24 @@ const AccountVerification = () => {
   // const email = searchParams.get('email')
   // const token = searchParams.get('token')
   const { email, token } = Object.fromEntries([...searchParams])
-
+  
   // Tạo biết state để biết được verify thành công
+  const [error, setError] = useState(null)
   const [verified, setVerified] = useState(false)
 
   // Gọi API để verify
   useEffect(() => {
     if (email && token) {
+      console.log('Verifying with:', { email, token })
       verifyUserAPI({ email, token }).then(() => setVerified(true))
+        .then(() => {
+          console.log('Verify API success');
+          setVerified(true);
+        })
+        .catch(err => {
+          console.error('Verify API error:', err);
+          setError(err.message);
+        });
     }
   }, [email, token])
 
@@ -24,6 +34,12 @@ const AccountVerification = () => {
   if (!email || !token) {
     return <Navigate to='/404' />
   }
+
+  if (error) {
+    console.error('Verification error:', error);
+    return <div>Error: {error}</div>; // Hiển thị lỗi để debug
+  }
+
   // Nếu chưa verify xong thì hiện loading
   if (!verified) {
     return <PageLoadingSpinner caption='Verify account...'/>

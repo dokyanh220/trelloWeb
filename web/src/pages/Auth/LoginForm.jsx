@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
@@ -18,14 +18,26 @@ import {
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
+import { useDispatch } from 'react-redux'
+import { loginUserAPI } from '~/redux/user/userSlice'
+import { toast } from 'react-toastify'
 
 function LoginForm() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors } } = useForm()
   let [searchParams] = useSearchParams()
   const { registeredEmail, verifiedEmail } = Object.fromEntries(searchParams)
 
   const submitLogIn = (data) => {
-    console.log('🚀 ~ submitLogIn ~ data:', data)
+    const { email, password } = data
+    toast.promise(dispatch(loginUserAPI({ email, password })),
+      { pending: 'Logging in...' })
+      .then(res => {
+        console.log(res)
+        // Kiểm tra không có lỗi mới redirect đến route navigate('/')
+        if (!res.error) navigate('/')
+      })
   }
 
   return (
@@ -54,7 +66,7 @@ function LoginForm() {
             {registeredEmail &&
               <Alert severity="info" sx={{ '.MuiAlert-message': { overflow: 'hidden' } }}>
                 An email has been sent to&nbsp;
-                <Typography variant="span" sx={{ fontWeight: 'bold', '&:hover': { color: '#fdba26' } }}>trungquandev@gmail.com</Typography>
+                <Typography variant="span" sx={{ fontWeight: 'bold', '&:hover': { color: '#fdba26' } }}>{}</Typography>
                 <br />Please check and verify your account before logging in!
               </Alert>
             }
