@@ -18,11 +18,16 @@ import { ConfirmProvider } from 'material-ui-confirm'
 // Cấu hình redux-store
 import { Provider } from 'react-redux'
 import { store } from '~/redux/store'
+// Cấu hình redux-persist
+import { PersistGate } from 'redux-persist/integration/react'
+import { persistStore } from 'redux-persist'
+const persistor = persistStore(store)
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter basename='/'>
-      <Provider store={store}>
+  // <React.StrictMode>
+  <BrowserRouter basename='/'>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
         <CssVarsProvider theme={theme}>
           <ConfirmProvider>
             <CssBaseline />
@@ -36,7 +41,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <App />
           </ConfirmProvider>
         </CssVarsProvider>
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>
+      </PersistGate>
+    </Provider>
+  </BrowserRouter>
+  // </React.StrictMode>
 )

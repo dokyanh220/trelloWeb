@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import authorizeAxiosInstance from '~/utils/authorizeAxios'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { API_ROOT } from '~/utils/constanst'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { mapOrder } from '~/utils/sorts'
@@ -42,7 +42,10 @@ export const activeBoardSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fecthBoardDetailsAPI.fulfilled, (state, action) => {
       // action.payload chính là respone.data trả về ở fecthBoardDetailsAPI
-      let board = action.payload
+      // Tạo bản sao board mới có thể sắp xếp(mapOrder) hoặc thay đổi bên trong object
+      // Nếu không đối tượng board (bản sao của payload) vẫn đang bị đóng băng (frozen) trong môi trường của bạn
+      // TypeError: Cannot assign to read only property 'columns' of object '#<Object>'
+      let board = cloneDeep(action.payload) // hoặc JSON.parse(JSON.stringify(action.payload))
 
       // sắp xếp thứ tự column trước khi gửi dữ liệu cho các components
       board.columns = mapOrder(board?.columns, board?.columnOrderIds, '_id')

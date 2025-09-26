@@ -18,7 +18,6 @@ const createNew = async (req, res, next) => {
 }
 
 const verifyAccount = async (req, res, next) => {
-  console.log('Validation input:', req.body)
   const correctCondition = Joi.object({
     email: Joi.string().required().pattern(EMAIL_RULE).message(EMAIL_RULE_MESSAGE),
     token: Joi.string().required()

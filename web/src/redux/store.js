@@ -17,9 +17,9 @@ const reducers = combineReducers({
   user: userReducer
 })
 
+const persistedReducers = persistReducer(rootPersistConfig, reducers)
+
 export const store = configureStore({
-  reducer: {
-    activeBoard: activeBoardReducer,
-    user: userReducer
-  }
+  reducer: persistedReducers,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false })
 })
