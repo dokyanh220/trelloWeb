@@ -1,8 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { Box } from '@mui/material'
 import Button from '@mui/material/Button'
-import Avatar from '@mui/material/Avatar'
-import LockIcon from '@mui/icons-material/Lock'
+import samsungLogo from '~/assets/auth/samsung.png'
 import Typography from '@mui/material/Typography'
 import { Card as MuiCard } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
@@ -41,10 +40,7 @@ function RegisterForm() {
             justifyContent: 'center',
             gap: 1
           }}>
-            <Avatar sx={{ bgcolor: 'primary.main' }}><LockIcon /></Avatar>
-          </Box>
-          <Box sx={{ marginTop: '1em', display: 'flex', justifyContent: 'center', color: theme => theme.palette.grey[500] }}>
-            Author: dokyanh220
+            <img src={samsungLogo} alt="" width='200' />
           </Box>
           <Box sx={{ padding: '0 1em 1em 1em' }}>
             <Box sx={{ marginTop: '1em' }}>
