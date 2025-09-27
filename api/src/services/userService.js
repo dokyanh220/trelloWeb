@@ -105,8 +105,29 @@ const login = async (redBody) => {
   } catch (error) { throw error }
 }
 
+const refreshToken = async (clientRefreshToken) => {
+  try {
+    // Giải mã token có hợp lệ không
+    const refreshTokenDecoded = await JwtProvider.verifyToken(clientRefreshToken, env.REFRESH_TOKEN_SECRET_SIGNATURE)
+
+    // Thay vì lưu thông tin user và cố định trong token, có thể lấy từ decoded để tiết kiệm query vào DB lấy data mới
+    const userInfo = { _id: refreshTokenDecoded._id, email: refreshTokenDecoded.email }
+
+    // Tạo ra 2 loại token để trả về BE
+    const accessToken = await JwtProvider.genarateToken(
+      userInfo,
+      env.ACCESS_TOKEN_SECRET_SIGNATURE,
+      env.ACCESS_TOKEN_LIFE
+      // 5
+    )
+
+    return { accessToken }
+  } catch (error) { throw error }
+}
+
 export const userService = {
   createNew,
   verifyAccount,
-  login
+  login,
+  refreshToken
 }

@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton'
 import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 
 function Profiles() {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -19,6 +21,14 @@ function Profiles() {
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+  const currentUser = useSelector(selectCurrentUser)
+
+  const displayUserName = () => {
+    const username = currentUser?.username
+    const displayName = currentUser?.displayName
+    if (!username && !displayName) return 'User'
+    return displayName || username
   }
 
   return (
@@ -48,11 +58,10 @@ function Profiles() {
           'aria-labelledby': 'basic-button-profiles'
         }}
       >
-        <MenuItem>
-          <Avatar sx={{ width: 28, height: 28, mr: 2 }} /> Profile
-        </MenuItem>
-        <MenuItem>
-          <Avatar sx={{ width: 28, height: 28, mr: 2 }} /> My account
+        <MenuItem sx={{
+          '&:hover': { color: 'success.light' }
+        }}>
+          <Avatar sx={{ width: 28, height: 28, mr: 2 }} /> {displayUserName()}
         </MenuItem>
         <Divider />
         <MenuItem>
@@ -67,9 +76,14 @@ function Profiles() {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem>
+        <MenuItem sx={{
+          '&:hover': {
+            color: 'warning.dark',
+            '& .logout-icon': { color: 'warning.dark' }
+          }
+        }}>
           <ListItemIcon>
-            <Logout fontSize="small" />
+            <Logout className='logout-icon' fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>

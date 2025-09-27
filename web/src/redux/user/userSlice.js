@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
 import authorizeAxiosInstance from '~/utils/authorizeAxios'
 import { API_ROOT } from '~/utils/constanst'
 
@@ -18,6 +19,18 @@ export const loginUserAPI = createAsyncThunk(
   }
 )
 
+// Clear data user in redux
+export const logoutUserAPI = createAsyncThunk(
+  'user/logoutUserAPI',
+  async (showSuccessMessage = true) => {
+    const response = await authorizeAxiosInstance.delete(`${API_ROOT}/v1/users/logout`, showSuccessMessage)
+    if (showSuccessMessage) {
+      toast.success('Logged out successfully!')
+    }
+    return response.data
+  }
+)
+
 // Khởi tạo một Slice trong kho lưu trữ - Redux Store
 export const userSlice = createSlice({
   name: 'user',
@@ -30,6 +43,13 @@ export const userSlice = createSlice({
       // action.payload chính là respone.data trả về ở loginUserAPI
       const user = action.payload
       state.currentUser = user
+    })
+    builder.addCase(logoutUserAPI.fulfilled, (state) => {
+      /**
+       * API logout gọi thành công clear currentUser về null
+       * Kết hợp ProtectedRout ở App.jsx điều hướng về trang login
+       */
+      state.currentUser = null
     })
   }
 })
