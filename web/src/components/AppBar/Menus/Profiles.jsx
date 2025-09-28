@@ -14,8 +14,6 @@ import { useConfirm } from 'material-ui-confirm'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentUser, logoutUserAPI } from '~/redux/user/userSlice'
 import { Link } from 'react-router-dom'
-import { color } from '@mui/system'
-
 function Profiles() {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)

@@ -49,15 +49,15 @@ const createNew = async (reqBody) => {
   } catch (error) { throw error }
 }
 
-const verifyAccount = async (redBody) => {
+const verifyAccount = async (reqBody) => {
   try {
     // Query user trong database
-    const exitUser = await userModel.findOneByEmail(redBody.email)
+    const exitUser = await userModel.findOneByEmail(reqBody.email)
 
     // Các bước kiểm tra cần thiết
     if (!exitUser) throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found!')
     if (exitUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Account is already active!')
-    if (redBody.token !== exitUser.verifyToken) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Token is invalid!')
+    if (reqBody.token !== exitUser.verifyToken) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Token is invalid!')
 
     // Kiểm tra xong active user, xóa đi verifyToken
     const updateData = {
@@ -70,15 +70,15 @@ const verifyAccount = async (redBody) => {
   } catch (error) { throw error }
 }
 
-const login = async (redBody) => {
+const login = async (reqBody) => {
   try {
     // Query user trong database
-    const exitUser = await userModel.findOneByEmail(redBody.email)
+    const exitUser = await userModel.findOneByEmail(reqBody.email)
 
     // Các bước kiểm tra cần thiết
     if (!exitUser) throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found!')
     if (!exitUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Account is not active, Please check email to active!')
-    if (!bcryptjs.compareSync(redBody.password, exitUser.password)) {
+    if (!bcryptjs.compareSync(reqBody.password, exitUser.password)) {
       throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Your email or password is incorrect!')
     }
 
@@ -125,9 +125,40 @@ const refreshToken = async (clientRefreshToken) => {
   } catch (error) { throw error }
 }
 
+const update = async (userId, reqBody) => {
+  try {
+     // Query user trong database
+    const exitUser = await userModel.findOneById(userId)
+    if (!exitUser) throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found!')
+    if (!exitUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Account is not active!')
+
+    // khởi tạo user updated ban đầu = empty
+    let updatedUser = {}
+
+    if (reqBody.current_password && reqBody.new_password) {
+      // Kiểm tra current_password
+      if (!bcryptjs.compareSync(reqBody.current_password, exitUser.password)) {
+        throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Your current password is incorrect!')
+      }
+
+      // Nếu passed current_password, hash new password and update database
+      updatedUser = await userModel.update(userId, {
+        password: bcryptjs.hashSync(reqBody.new_password, 8)
+      })
+    }
+    else {
+      // Trường hợp update thông tin chung, vd: displayName
+      updatedUser = await userModel.update(exitUser._id, reqBody)
+    }
+
+    return pickUser(updatedUser)
+  } catch (error) { throw error }
+}
+
 export const userService = {
   createNew,
   verifyAccount,
   login,
-  refreshToken
+  refreshToken,
+  update
 }

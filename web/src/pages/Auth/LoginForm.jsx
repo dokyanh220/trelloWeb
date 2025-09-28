@@ -33,7 +33,7 @@ function LoginForm() {
     toast.promise(dispatch(loginUserAPI({ email, password })),
       { pending: 'Logging in...' })
       .then(res => {
-        console.log(res)
+        // console.log(res)
         // Kiểm tra không có lỗi mới redirect đến route navigate('/')
         if (!res.error) navigate('/')
       })
