@@ -18,16 +18,21 @@ function Auth() {
 
   return (
     <Box sx={{
+      position: 'absolute',
       display: 'flex',
       flexDirection: 'column',
       minHeight: '100vh',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      background: 'url("src/assets/auth/login-register-bg.jpg")',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      boxShadow: 'inset 0 0 0 2000px rgba(0, 0, 0, 0.2)'
+      backgrounColor: 'rgb(250, 251, 252)',
+      backgroundImage: 'url("src/assets/auth/trello-left.4f52d13c.svg"), url("src/assets/auth/trello-right.e6e102c7.svg")',
+      backgroundRepeat: 'no-repeat, no-repeat',
+      backgroundAttachment: 'fixed, fixed',
+      backgroundSize: '368px, 368px',
+      backgroundPosition: 'left bottom, right bottom',
+      width: '100%',
+      height: '100%',
+      zIndex: '-1'
     }}>
       {isLogin && <LoginForm />}
       {isRegister && <RegisterForm />}

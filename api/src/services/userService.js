@@ -97,7 +97,7 @@ const login = async (redBody) => {
     const refreshToken = await JwtProvider.genarateToken(
       userInfo,
       env.REFRESH_TOKEN_SECRET_SIGNATURE,
-      env.REFRESH_TOKEN_LIFE,
+      env.REFRESH_TOKEN_LIFE
       // 15
     )
 

@@ -2,7 +2,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
-import samsungLogo from '~/assets/auth/samsung.png'
+import trelloLogo from '~/assets/auth/trello-logo.svg'
 import Typography from '@mui/material/Typography'
 import { Card as MuiCard } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
@@ -49,7 +49,7 @@ function LoginForm() {
             justifyContent: 'center',
             gap: 1
           }}>
-            <img src={samsungLogo} alt="" width='200' />
+            <img src={trelloLogo} alt="" width='140' />
           </Box>
           <Box sx={{ marginTop: '1em', display: 'flex', justifyContent: 'center', flexDirection: 'column', padding: '0 1em' }}>
             {verifiedEmail &&

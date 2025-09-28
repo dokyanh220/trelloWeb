@@ -1,12 +1,11 @@
-// Cấu hình mặc định reactjs
-import React from 'react'
 import App from '~/App.jsx'
 // Cấu hinh react-dom
 import ReactDOM from 'react-dom/client'
 // Cấu hinh react-router-dom
-import { BrowserRouter, Routes, Route } from 'react-router'
+import { BrowserRouter } from 'react-router'
 // Cấu hình MUI
 import CssBaseline from '@mui/material/CssBaseline'
+import GlobalStyles from '@mui/material/GlobalStyles'
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
 import theme from '~/theme'
 // Cấu hình react-toastify
@@ -34,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <PersistGate persistor={persistor}>
         <CssVarsProvider theme={theme}>
           <ConfirmProvider>
+            <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
             <CssBaseline />
             <ToastContainer
               position="bottom-right"
