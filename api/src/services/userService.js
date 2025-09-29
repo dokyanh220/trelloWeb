@@ -125,7 +125,7 @@ const refreshToken = async (clientRefreshToken) => {
   } catch (error) { throw error }
 }
 
-const update = async (userId, reqBody) => {
+const update = async (userId, reqBody, userAvatarFile) => {
   try {
      // Query user trong database
     const exitUser = await userModel.findOneById(userId)
@@ -145,6 +145,10 @@ const update = async (userId, reqBody) => {
       updatedUser = await userModel.update(userId, {
         password: bcryptjs.hashSync(reqBody.new_password, 8)
       })
+    }
+    else if (userAvatarFile) {
+      // Trường hợp nhận được avatarFile
+      
     }
     else {
       // Trường hợp update thông tin chung, vd: displayName
