@@ -7,6 +7,7 @@ import { pickUser } from '~/utils/formatters'
 import { WEBSITE_DOMAIN } from '~/utils/constants'
 import { BrevoProvider } from '~/providers/BrevoProvider'
 import { JwtProvider } from '~/providers/JwtProvider'
+import { CloudinaryProvider } from '~/providers/CloudinaryProvider'
 import { env } from '~/config/environment'
 
 const createNew = async (reqBody) => {
@@ -148,7 +149,13 @@ const update = async (userId, reqBody, userAvatarFile) => {
     }
     else if (userAvatarFile) {
       // Trường hợp nhận được avatarFile
-      
+      const uploadResult = await CloudinaryProvider.streamUpload(userAvatarFile.buffer, 'users')
+      console.log('🚀 ~ update ~ uploadResult:', uploadResult)
+
+      // Lưu lại secure_url(đường dẫn bảo mật) của file ảnh vào database
+      updatedUser = await userModel.update(userId, {
+        avatar: uploadResult.secure_url
+      })
     }
     else {
       // Trường hợp update thông tin chung, vd: displayName

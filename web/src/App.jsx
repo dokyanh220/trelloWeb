@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router'
+import Boards from '~/pages/Boards'
 import Board from '~/pages/Boards/_id'
 import NotFound from '~/pages/404/NotFound'
 import Auth from '~/pages/Auth/Auth'
 import AccountVerification from '~/pages/Auth/AccountVerification'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-import Settings from './pages/Settings/Settings'
+import Settings from '~/pages/Settings/Settings'
 
 const ProtectedRoute = ({ user }) => {
   if (user === null) return <Navigate to='/login' replace={true} />
@@ -25,6 +26,7 @@ function App() {
       {/** Protected Routes (Hiểu đơn giản trong dự án của chúng ta là những route chỉ cho truy cập sau khi đã login */}
       <Route element={<ProtectedRoute user={currentUser} />}>
         <Route path='/boards/:boardId' element={<Board />} />
+        <Route path='/boards' element={<Boards />} />
 
         <Route path='/settings/account' element={<Settings />} />
         <Route path='/settings/security' element={<Settings />} />
