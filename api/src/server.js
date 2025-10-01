@@ -29,9 +29,15 @@ const START_SERVER = () => {
   // Middleware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware)
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(`Back-end Server running successfully at http://${env.APP_HOST}:${env.APP_PORT}/`)
-  })
+  if (env.BUILD_MODE === 'prod') {
+    app.listen(process.env.WEBSITE_DOMAIN_PRODUCTION, () => {
+      console.log(`Back-end Server running successfully at ${env.WEBSITE_DOMAIN_PRODUCTION}`)
+    })
+  } else {
+    app.listen(env.APP_PORT, env.APP_HOST, () => {
+      console.log(`Back-end Server running successfully at http://${env.APP_HOST}:${env.APP_PORT}/`)
+    })
+  }
 
   // Cleanup trước khi dừng server
   exitHook(() => {
