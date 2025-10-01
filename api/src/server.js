@@ -29,7 +29,7 @@ const START_SERVER = () => {
   // Middleware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware)
 
-  if (env.BUILD_MODE === 'prod') {
+  if (env.BUILD_MODE === 'production') {
     app.listen(process.env.WEBSITE_DOMAIN_PRODUCTION, () => {
       console.log(`Back-end Server running successfully at ${env.WEBSITE_DOMAIN_PRODUCTION}`)
     })
