@@ -8,6 +8,7 @@ export default defineConfig({
     'process.env': process.env
   },
   plugins: [react(), svgr()],
+  base: '/',
   optimizeDeps: {
     include: ['@mui/material/Tooltip']
   },
