@@ -4,7 +4,6 @@ import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import SvgIcon from '@mui/material/SvgIcon'
-import Typography from '@mui/material/Typography'
 import Workspaces from './Menus/Workspaces'
 import Recent from './Menus/Recent'
 import Starred from './Menus/Starred'
@@ -21,7 +20,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import { Link } from 'react-router-dom'
-import { padding, positions } from '@mui/system'
 
 function AppBar() {
   const [searchValue, setSearchValue] = useState('')
@@ -64,8 +62,10 @@ function AppBar() {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', gap: 2 }}>
-        <Link to='/boards' sx={{  }}>
-          <Tooltip title='Boards list'> <AppsIcon sx={{ color: 'white', verticalAlign: 'middle' }} /></Tooltip>
+        <Link to='/boards'>
+          <Tooltip title='Boards list'>
+            <AppsIcon sx={{ color: 'white', verticalAlign: 'middle' }}></AppsIcon>
+          </Tooltip>
         </Link>
 
         <Link to='/'>

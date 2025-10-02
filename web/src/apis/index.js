@@ -8,11 +8,18 @@ import { toast } from 'react-toastify'
 //   return response.data
 // }
 
+// BOARDS
 export const updateBoardDetailsAPI = async (boardId, updateData) => {
   const response = await authorizeAxiosInstance.put(`${API_ROOT}/v1/boards/${boardId}`, updateData)
   return response.data
 }
 
+export const fecthBoardsAPI = async (searchPath) => {
+  const response = await authorizeAxiosInstance.get(`${API_ROOT}/v1/boards${searchPath}`)
+  return response.data
+}
+
+// COLUMNS
 export const moveCardToDifferentColumnAPI = async (updateData) => {
   const response = await authorizeAxiosInstance.put(`${API_ROOT}/v1/boards/supports/moving_card`, updateData)
   return response.data
@@ -33,11 +40,13 @@ export const deleteColumnDetailsAPI = async (columnId) => {
   return response.data
 }
 
+// CARDS
 export const createNewCardApi = async (newCardData) => {
   const response = await authorizeAxiosInstance.post(`${API_ROOT}/v1/cards`, newCardData)
   return response.data
 }
 
+// USERS
 export const registerUserAPI = async (data) => {
   const response = await authorizeAxiosInstance.post(`${API_ROOT}/v1/users/register`, data)
   toast.success('Account created successfully! Please check and verify your account before logging in!', { theme: 'colored' })

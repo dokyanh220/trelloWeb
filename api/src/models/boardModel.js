@@ -126,32 +126,42 @@ const pullColumnOrderIds = async (column) => {
 }
 
 const getBoards = async (userId, page, itemsPerPage) => {
-  const queryCollections = [
-    // Điều kiện 1: Board chưa bị xóa
-    { _destroy: false },
-    // Điều kiện 2: userId thực hiện request phải nằm trong mảng ownerId hoặc methodId, sử dụng toán tử $all của mongoDB
-    { $or: [
-      { ownerId: { $all: [new ObjectId(userId)] }},
-      { methodId: { $all: [new ObjectId(userId)] }},
-    ] }
-  ]
-
-  const query = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
-    { $match: { $and: queryCollections } },
-    // sort title của board a-z(mặc định sẽ bị chữ 'B' đứng trước chữ 'a')
-    { $sort: { title: 1 } },
-    // $facet để xử lý nhiều luồng trong một query
-    { $facet: {
-      // Luồng 01: query board
-      'queryBoards': [
-        { $skip: pagingSkipValue(page, itemsPerPage) }, // bỏ qua số lượng bản ghi của trang trước
-        { $limit: itemsPerPage } //giới hạn số lượng return trên 1 trang
-      ],
-      // Luồng 02: query all bản ghi boards trong db
-      'queryTotalBoards':  [{ $count: 'countedALLBoards' }]
-    } },
+  try {
+    const queryCollections = [
+      // Điều kiện 1: Board chưa bị xóa
+      { _destroy: false },
+      // Điều kiện 2: userId thực hiện request phải nằm trong mảng ownerId hoặc methodId, sử dụng toán tử $all của mongoDB
+      { $or: [
+        { ownerId: { $all: [new ObjectId(userId)] } },
+        { memberId: { $all: [new ObjectId(userId)] } }
+      ] }
+    ]
+  
+    const query = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
+      { $match: { $and: queryCollections } },
+      // sort title của board a-z(mặc định sẽ bị chữ 'B' đứng trước chữ 'a')
+      { $sort: { title: 1 } },
+      // $facet để xử lý nhiều luồng trong một query
+      { $facet: {
+        // Luồng 01: query board
+        'queryBoards': [
+          { $skip: pagingSkipValue(page, itemsPerPage) }, // bỏ qua số lượng bản ghi của trang trước
+          { $limit: itemsPerPage } //giới hạn số lượng return trên 1 trang
+        ],
+        // Luồng 02: query all bản ghi boards trong db
+        'queryTotalBoards':  [{ $count: 'countedAllBoards' }]
+      } }
+    ],
     { collation: { locale: 'en' } }
-  ])
+    ).toArray()
+  
+    const res = query[0]
+    
+    return {
+      boards: res.queryBoards || [],
+      totalBoards: res.queryTotalBoards[0]?.countedAllBoards || 0
+    }
+  } catch (error) { throw Error(error) }
 }
 export const boardModel = {
   BOARD_COLLECTION_NAME,
