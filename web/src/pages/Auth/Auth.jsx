@@ -4,8 +4,8 @@ import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-import bgImageLeft from '~/assets/auth/trello-left.4f52d13c.svg'
-import bgImageRigth from '~/assets/auth/trello-right.e6e102c7.svg'
+import trelloLeftBg from '~/assets/auth/trello-left.4f52d13c.svg'
+import trelloRightBg from '~/assets/auth/trello-right.e6e102c7.svg'
 
 function Auth() {
   const location = useLocation()
