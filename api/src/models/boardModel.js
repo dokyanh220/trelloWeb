@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi, { object } from 'joi'
 import { ObjectId } from 'mongodb'
 import { GET_DB } from '~/config/mongodb'
 import { BOARD_TYPES } from '~/utils/constants'
@@ -18,12 +18,12 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   ).default([]),
 
   // admin board
-  ownerId: Joi.array().items(
+  ownerIds: Joi.array().items(
     Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
   ).default([]),
 
   // members board
-  methodId: Joi.array().items(
+  memberIds: Joi.array().items(
     Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
   ).default([]),
 
@@ -38,10 +38,14 @@ const validateBeforeCreate = async (data) => {
   return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
 }
 
-const createNew = async (data) => {
+const createNew = async (userId, data) => {
   try {
-    const validDate = await validateBeforeCreate(data)
-    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validDate)
+    const validData = await validateBeforeCreate(data)
+    const newBoardToAdđ = {
+      ...validData,
+      ownerIds: [new ObjectId(userId)]
+    }
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(newBoardToAdđ)
   } catch (error) { throw new Error(error) }
 }
 
@@ -52,14 +56,21 @@ const findOneById = async (boardId) => {
   } catch (error) { throw new Error(error) }
 }
 
-const getDetails = async (id) => {
+const getDetails = async (userId, boardId) => {
   try {
+    const queryCollections = [
+      { _id: new ObjectId(boardId) },
+      // Điều kiện 1: Board chưa bị xóa
+      { _destroy: false },
+      // Điều kiện 2: userId thực hiện request phải nằm trong mảng ownerIds hoặc memberIds, sử dụng toán tử $all của mongoDB
+      { $or: [
+        { ownerIds: { $all: [new ObjectId(userId)] } },
+        { memberIds: { $all: [new ObjectId(userId)] } }
+      ] }
+    ]
 
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
-      { $match: {
-        _id: new ObjectId(id),
-        _destroy: false
-      } },
+      { $match: { $and: queryCollections } },
       { $lookup: {
         from: columnModel.COLUMN_COLLECTION_NAME,
         localField: '_id',
@@ -130,10 +141,10 @@ const getBoards = async (userId, page, itemsPerPage) => {
     const queryCollections = [
       // Điều kiện 1: Board chưa bị xóa
       { _destroy: false },
-      // Điều kiện 2: userId thực hiện request phải nằm trong mảng ownerId hoặc methodId, sử dụng toán tử $all của mongoDB
+      // Điều kiện 2: userId thực hiện request phải nằm trong mảng ownerIds hoặc methodIds, sử dụng toán tử $all của mongoDB
       { $or: [
-        { ownerId: { $all: [new ObjectId(userId)] } },
-        { memberId: { $all: [new ObjectId(userId)] } }
+        { ownerIds: { $all: [new ObjectId(userId)] } },
+        { memberIds: { $all: [new ObjectId(userId)] } }
       ] }
     ]
   

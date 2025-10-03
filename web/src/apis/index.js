@@ -9,6 +9,12 @@ import { toast } from 'react-toastify'
 // }
 
 // BOARDS
+export const createBoardDetailsAPI = async (data) => {
+  const response = await authorizeAxiosInstance.post(`${API_ROOT}/v1/boards`, data)
+  toast.success('Board created successfully!')
+  return response.data
+}
+
 export const updateBoardDetailsAPI = async (boardId, updateData) => {
   const response = await authorizeAxiosInstance.put(`${API_ROOT}/v1/boards/${boardId}`, updateData)
   return response.data

@@ -60,6 +60,11 @@ function Boards() {
    * Nhắc lại kiến thức cơ bản hàm parseInt cần tham số thứ 2 là Hệ thập phân (hệ đếm cơ số 10) để đảm bảo chuẩn số cho phân trang
    */
   const page = parseInt(query.get('page') || '1', 10)
+  
+  const updateState = (res) => {
+    setBoards(res.boards || [])
+    setTotalBoards(res.totalBoards || 0)
+  }
 
   useEffect(() => {
     // Fake tạm 16 cái item thay cho boards
@@ -71,11 +76,12 @@ function Boards() {
     console.log(location.search)
     // Gọi API lấy danh sách boards ở đây...
     const searchPath = location.search
-    fecthBoardsAPI(searchPath).then(res => {
-      setBoards(res.boards || [])
-      setTotalBoards(res.totalBoards || 0)
-    })
+    fecthBoardsAPI(searchPath).then(updateState)
   }, [location.search])
+
+  const afterCreateNewBoard = () => {
+    fecthBoardsAPI(location.search).then(updateState)
+  }
 
   // Lúc chưa tồn tại boards > đang chờ gọi api thì hiện loading
   if (!boards) {
@@ -104,7 +110,7 @@ function Boards() {
             </Stack>
             <Divider sx={{ my: 1 }} />
             <Stack direction="column" spacing={1}>
-              <SidebarCreateBoardModal />
+              <SidebarCreateBoardModal afterCreateNewBoard={afterCreateNewBoard}/>
             </Stack>
           </Grid>
 

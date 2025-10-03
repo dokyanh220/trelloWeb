@@ -8,9 +8,9 @@ const createNew = async (req, res, next) => {
     // console.log('req.files: ', req.files)
     // console.log('req.cookies: ', req.cookies)
     // console.log('req.jwtDecoded: ', req.jwtDecoded)
-
+    const userId = req.jwtDecoded._id
     // Điều hướng dữ liệu sang tầng Service
-    const createdBoard = await boardService.createNew(req.body)
+    const createdBoard = await boardService.createNew(userId, req.body)
 
     // Có kết quả trả về phía client
     res.status(StatusCodes.CREATED).json(createdBoard)
@@ -20,8 +20,9 @@ const createNew = async (req, res, next) => {
 const getDetails = async (req, res, next) => {
   try {
     const boardId = req.params.id
+    const userId = req.jwtDecoded._id
     // Sau này ở khóa MERN Stack Advance nâng cao học trực tiếp sẽ có thêm userId nữa để chỉ lấy board thuộc về user đó thôi chẳng hạn...vv
-    const board = await boardService.getDetails(boardId)
+    const board = await boardService.getDetails(userId, boardId)
     res.status(StatusCodes.OK).json(board)
   } catch (error) { next(error) }
 }

@@ -8,7 +8,7 @@ import { columnModel } from '~/models/columnModel'
 import { cardModel } from '~/models/cardModel'
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from '~/utils/constants'
 
-const createNew = async (reqBody) => {
+const createNew = async (userId, reqBody) => {
   try {
     // Xử lý logic dữ liệu tùy đặc thù dự án
     const newBoard = {
@@ -16,7 +16,7 @@ const createNew = async (reqBody) => {
       slug: slugify(reqBody.title)
     }
     // Gọi tới model để xử lý lưu bản ghi newBoard vào database
-    const createdBoard = await boardModel.createNew(newBoard)
+    const createdBoard = await boardModel.createNew(userId, newBoard)
 
     const getNewBoard = await boardModel.findOneById(createdBoard.insertedId)
     // Làm thêm xử lý logic khác với các Collection khác tùy đặc thù dự án...
@@ -27,9 +27,9 @@ const createNew = async (reqBody) => {
   } catch (error) { throw error }
 }
 
-const getDetails = async (boardId) => {
+const getDetails = async (userId, boardId) => {
   try {
-    const board = await boardModel.getDetails(boardId)
+    const board = await boardModel.getDetails(userId, boardId)
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
     }
