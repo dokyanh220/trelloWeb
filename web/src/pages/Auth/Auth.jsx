@@ -25,14 +25,14 @@ function Auth() {
       alignItems: 'center',
       justifyContent: 'flex-start',
       backgrounColor: 'rgb(250, 251, 252)',
-      backgroundImage: 'url("src/assets/auth/trello-left.4f52d13c.svg"), url("src/assets/auth/trello-right.e6e102c7.svg")',
+      backgroundImage: 'url("assets/auth/trello-left.4f52d13c.svg"), url("assets/auth/trello-right.e6e102c7.svg")',
       backgroundRepeat: 'no-repeat, no-repeat',
       backgroundAttachment: 'fixed, fixed',
       backgroundSize: '368px, 368px',
       backgroundPosition: 'left bottom, right bottom',
       width: '100%',
       height: '100%',
-      zIndex: '-1'
+      zindex: '-1'
     }}>
       {isLogin && <LoginForm />}
       {isRegister && <RegisterForm />}
