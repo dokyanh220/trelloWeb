@@ -58,7 +58,6 @@ function Board() {
     }
     dispatch(updateCurrentActiveBoard(newBoard))
 
-
     updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
   }
 

@@ -24,13 +24,14 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
-import { createNewCardApi, deleteColumnDetailsAPI } from '~/apis'
+import { createNewCardApi, deleteColumnDetailsAPI, updateColumnDetailsAPI } from '~/apis'
 import { cloneDeep } from 'lodash'
 import {
   selectCurrentActiveBoard,
   updateCurrentActiveBoard
 } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 
 function Column({ column }) {
   const dispatch = useDispatch()
@@ -79,6 +80,17 @@ function Column({ column }) {
 
     toggleOpenNewCardForm()
     setNewCardTitle('')
+  }
+
+  const onUpdateColumnTitle = (newTitle) => {
+    updateColumnDetailsAPI(column._id, { title: newTitle }).then(() => {
+      const newBoard = cloneDeep(board)
+      const columnToUpdate = newBoard.columns.find(c => c._id === column._id)
+      if (columnToUpdate) {
+        columnToUpdate.title = newTitle
+      }
+      dispatch(updateCurrentActiveBoard(newBoard))
+    })
   }
 
   const confirmDeleteColumn = useConfirm()
@@ -163,7 +175,7 @@ function Column({ column }) {
             justifyContent: 'space-between'
           }}
         >
-          <Typography
+          {/* <Typography
             variant="h7"
             sx={{
               fontWeight: 'bold',
@@ -171,7 +183,12 @@ function Column({ column }) {
             }}
           >
             {column?.title}
-          </Typography>
+          </Typography> */}
+          <ToggleFocusInput
+            value={column?.title}
+            onChangedValue={onUpdateColumnTitle}
+            data-no-dnd='true'
+          />
           <Box>
             <Tooltip title="More options">
               <ExpandMoreIcon
