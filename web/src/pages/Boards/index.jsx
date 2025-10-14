@@ -74,7 +74,6 @@ function Boards() {
     // Fake tạm giả sử trong Database trả về có tổng 100 bản ghi boards
     setTotalBoards(100)
 
-    console.log(location.search)
     // Gọi API lấy danh sách boards ở đây...
     const searchPath = location.search
     fecthBoardsAPI(searchPath).then(updateState)

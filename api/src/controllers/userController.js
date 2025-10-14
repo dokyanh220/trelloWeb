@@ -26,14 +26,14 @@ const login = async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: ms('48 hours')
+      maxAge: ms('48h')
     })
 
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: ms('48 hours')
+      maxAge: ms('48h')
     })
 
     res.status(StatusCodes.OK).json(result)
@@ -57,7 +57,7 @@ const refreshToken = async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: ms('48 hours')
+      maxAge: ms('48h')
     })
 
     res.status(StatusCodes.OK).json(result)
