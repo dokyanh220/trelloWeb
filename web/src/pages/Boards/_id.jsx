@@ -17,6 +17,7 @@ import {
 import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import Container from '@mui/material/Container'
+import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard'
 
 function Board() {
   const dispatch = useDispatch()
@@ -92,6 +93,10 @@ function Board() {
       maxWidth={false}
       sx={{ height: '100vh' }}
     >
+      {/* Modal activeCard, check khi đóng mở dựa theo điều kiện có tồn tại data activeCard lưu trong redux mới render. Mỗi thời điểm chỉ tồn tại một cái Modal card đang active */}
+      <ActiveCard />
+
+      {/* Các thành phần còn lại của boardDetails */}
       <AppBar />
       <BoardBar board={board} />
       <BoardContent
