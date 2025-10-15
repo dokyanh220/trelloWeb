@@ -91,7 +91,7 @@ function ActiveCard() {
       sx={{ overflowY: 'auto' }}>
       <Box sx={{
         position: 'relative',
-        width: 900,
+        width: { xs: '95vw', sm: '90vw', md: 900 },
         maxWidth: 900,
         bgcolor: 'white',
         boxShadow: 24,
@@ -113,8 +113,6 @@ function ActiveCard() {
 
         <Box sx={{ mb: 4 }}>
           <img
-            // responsive
-            
             style={{ width: '100%', height: '320px', borderRadius: '6px', objectFit: 'cover' }}
             src={deadpoolLove}
             alt="card-cover"
