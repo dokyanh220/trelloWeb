@@ -10,8 +10,12 @@ import { CSS } from '@dnd-kit/utilities'
 import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import AttachmentIcon from '@mui/icons-material/Attachment'
+import { useDispatch } from 'react-redux'
+import { updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 
 function Card({ card }) {
+  const dispatch = useDispatch()
+
   const {
     attributes,
     listeners,
@@ -23,6 +27,7 @@ function Card({ card }) {
     id: card._id,
     data: { ...card }
   })
+
   const dndKitCardStyles = {
     // touchAction: 'none',
     transform: CSS.Translate.toString(transform),
@@ -30,6 +35,7 @@ function Card({ card }) {
     opacity: isDragging ? 0.5 : undefined,
     border: isDragging ? '1px solid #2ecc71' : undefined
   }
+
   const shouldShowCardActions = () => {
     return (
       !!card?.memberIds?.length ||
@@ -37,8 +43,15 @@ function Card({ card }) {
       !!card?.attachments?.length
     )
   }
+
+  const setActiveCardRedux = () => {
+    // Cập nhập data activeCard vào redux
+    dispatch(updateCurrentActiveCard(card))
+  }
+
   return (
     <MUICard
+      onDoubleClick={setActiveCardRedux}
       ref={setNodeRef}
       style={dndKitCardStyles}
       {...attributes}

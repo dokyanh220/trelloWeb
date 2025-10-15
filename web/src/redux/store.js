@@ -4,6 +4,7 @@ import { userReducer } from './user/userSlice'
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
+import { activeCardReducer } from './activeCard/activeCardSlice'
 
 const rootPersistConfig = {
   key: 'root', // key của persist do chúng ta chỉ định, để mặc định là root
@@ -14,6 +15,7 @@ const rootPersistConfig = {
 
 const reducers = combineReducers({
   activeBoard: activeBoardReducer,
+  activeCard: activeCardReducer,
   user: userReducer
 })
 
@@ -21,5 +23,5 @@ const persistedReducers = persistReducer(rootPersistConfig, reducers)
 
 export const store = configureStore({
   reducer: persistedReducers,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false  })
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false })
 })
