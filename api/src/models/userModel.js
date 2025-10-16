@@ -70,7 +70,9 @@ const update = async (userId, updateData) => {
       { $set: updateData },
       { returnDocument: 'after' } // sẽ trả về kết quả mới sau khi cập nhật
     )
-    return result
+    // Nếu MongoDB cũ: result.value chứa document
+    // Nếu MongoDB mới: result chính là document
+    return result.value || result
   } catch (error) { throw new Error(error) }
 }
 

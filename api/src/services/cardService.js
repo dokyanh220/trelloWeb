@@ -1,5 +1,6 @@
 import { cardModel } from '~/models/cardModel'
 import { columnModel } from '~/models/columnModel'
+import { CloudinaryProvider } from '~/providers/CloudinaryProvider'
 
 const createNew = async (reqBody) => {
   try {
@@ -18,13 +19,43 @@ const createNew = async (reqBody) => {
   } catch (error) { throw error }
 }
 
-const update = async (cardId, reqBody) => {
+const update = async (cardId, reqBody, cardCoverFile) => {
   try {
     const updateData = {
       ...reqBody,
       updatedAt: Date.now()
     }
-    const updatedCard = await cardModel.update(cardId, updateData)
+
+    let updatedCard = {}
+
+    if (cardCoverFile) {
+      // Trường hợp nhận được avatarFile
+      // Lấy thông tin card hiện tại để xóa cover cũ
+      const currentCard = await cardModel.findOneById(cardId)
+
+      // Xóa cover cũ nếu có
+      if (currentCard?.cover) {
+        try {
+          const oldPublicId = CloudinaryProvider.getPublicIdFromUrl(currentCard.cover)
+          if (oldPublicId) {
+            await CloudinaryProvider.destroyMedia(oldPublicId)
+            // console.log('🗑️ Deleted old cover:', oldPublicId)
+          }
+        } catch (error) {
+          console.warn('⚠️ Could not delete old cover:', error.message)
+        }
+      }
+
+      const uploadResult = await CloudinaryProvider.streamUpload(cardCoverFile.buffer, 'card_covers')
+      // console.log('🚀 ~ update ~ uploadResult:', uploadResult)
+
+      // Lưu lại secure_url(đường dẫn bảo mật) của file ảnh vào database
+      updatedCard = await cardModel.update(cardId, {
+        cover: uploadResult.secure_url
+      })
+    } else {
+      updatedCard = await cardModel.update(cardId, updateData)
+    }
 
     return updatedCard
   } catch (error) { throw error }

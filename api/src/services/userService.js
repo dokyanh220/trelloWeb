@@ -149,8 +149,25 @@ const update = async (userId, reqBody, userAvatarFile) => {
     }
     else if (userAvatarFile) {
       // Trường hợp nhận được avatarFile
+
+      // Xóa avatar cũ nếu có
+      if (exitUser.avatar) {
+        try {
+          // Lấy id avatar cũ bằng link id của ảnh trên cloudinary
+          const oldPublicId = CloudinaryProvider.getPublicIdFromUrl(exitUser.avatar)
+          if (oldPublicId) {
+            // Gọi API của Cloudinary để xóa file
+            await CloudinaryProvider.destroyMedia(oldPublicId)
+            // console.log('🗑️ Deleted old avatar:', oldPublicId)
+          }
+        } catch (error) {
+          console.warn('⚠️ Could not delete old avatar:', error.message)
+          // Không throw error, chỉ warning
+        }
+      }
+
       const uploadResult = await CloudinaryProvider.streamUpload(userAvatarFile.buffer, 'users')
-      console.log('🚀 ~ update ~ uploadResult:', uploadResult)
+      // console.log('🚀 ~ update ~ uploadResult:', uploadResult)
 
       // Lưu lại secure_url(đường dẫn bảo mật) của file ảnh vào database
       updatedUser = await userModel.update(userId, {
@@ -161,7 +178,8 @@ const update = async (userId, reqBody, userAvatarFile) => {
       // Trường hợp update thông tin chung, vd: displayName
       updatedUser = await userModel.update(exitUser._id, reqBody)
     }
-
+    
+    // console.log('🚀 ~ update ~ updatedUser:', updatedUser)
     return pickUser(updatedUser)
   } catch (error) { throw error }
 }

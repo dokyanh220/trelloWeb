@@ -36,6 +36,26 @@ export const activeBoardSlice = createSlice({
 
       // Update dữ liệu của currentActiveBoard
       state.currentActiveBoard = board
+    },
+
+    updateCardInBoard: (state, action) => {
+      // Update mestedData
+      const incomingCard = action.payload
+
+      // Tìm vị trí của activeCard (board > column > card) theo dữ liệu của redux
+      const column = state.currentActiveBoard.columns.find(i => i._id === incomingCard.columnId)
+      if (column) {
+        const card = column.cards.find(i => i._id === incomingCard._id)
+        if (card) {
+          // card.title = incomingCard.title
+          // Object.assign(card, incomingCard)
+
+          // Loop thay đổi mới tất cả dữ liệu card = incommingCard
+          Object.keys(incomingCard).forEach(key => {
+            card[key] = incomingCard[key]
+          })
+        }
+      }
     }
   },
   // ExtraReducer nơi xử lý dữ liệu bất đồng bộ
@@ -68,7 +88,7 @@ export const activeBoardSlice = createSlice({
 
 // Actions là nơi dành cho các components bên dưới gọi bằng dispatch() tới nó để cập nhập lại dữ liệu thông qua reducer(chạy đồng bộ)
 // Để ý ở trên thì không thấy properties actions đâu cả, bời vì những cái actions này đơn giản là được redux tạo tự động theo tên của reducer
-export const { updateCurrentActiveBoard } = activeBoardSlice.actions
+export const { updateCurrentActiveBoard, updateCardInBoard } = activeBoardSlice.actions
 
 // Selector: là nơi dành cho các components bến dưới gọi bằng hook useSelector() để lấy dữ liệu từ trong kho redux store để sử dụng
 export const selectCurrentActiveBoard = (state) => {

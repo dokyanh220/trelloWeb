@@ -61,7 +61,7 @@ function CardActivitySection() {
           </Tooltip>
           <Box sx={{ width: 'inherit' }}>
             <Typography variant="span" sx={{ fontWeight: 'bold', mr: 1 }}>
-              Quan Do
+              Anh Do
             </Typography>
 
             <Typography variant="span" sx={{ fontSize: '12px' }}>

@@ -6,7 +6,7 @@ import ApiError from '~/utils/ApiError'
 const createNew = async (req, res, next) => {
   try {
     const createdUser = await userService.createNew(req.body)
-    res.status (StatusCodes.CREATED).json(createdUser)
+    res.status(StatusCodes.CREATED).json(createdUser)
   } catch (error) { next (error) }
 }
 
@@ -71,6 +71,7 @@ const update = async (req, res, next) => {
     const userId = req.jwtDecoded._id
     const userAvatarFile = req.file
     const updatedUser = await userService.update(userId, req.body, userAvatarFile)
+    // console.log('🚀 ~ update ~ updatedUser:', updatedUser)
     res.status(StatusCodes.OK).json(updatedUser)
   } catch (error) { next(error) }
 }

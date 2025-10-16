@@ -5,7 +5,7 @@ import { ALLOW_COMMON_FILE_TYPES, LIMIT_COMMON_FILE_SIZE } from '~/utils/validat
 
 // Kiểm tra loại file được chấp nhận
 const customFileFilter = (req, file, cb) => {
-  console.log('🚀 ~ customFileFilter ~ file:', file)
+  // console.log('🚀 ~ customFileFilter ~ file:', file)
 
   // Đối với multer kiểm tra kiểu file sử dụng mimetype
   if (!ALLOW_COMMON_FILE_TYPES.includes(file.mimetype)) {

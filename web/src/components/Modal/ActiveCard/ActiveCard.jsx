@@ -37,6 +37,7 @@ import { styled } from '@mui/material/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearCurrentActiveCard, selectCurrentActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 import { updateCardDetailsAPI } from '~/apis'
+import { updateCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -73,13 +74,16 @@ function ActiveCard() {
 
   // Func dùng chung cho các trường hợp cập nhật Card
   const callApiUpdateCard = async (updatedData) => {
-    const updatedCard = await updateCardDetailsAPI(activeCard._id, updatedData)
+    const response = await updateCardDetailsAPI(activeCard._id, updatedData)
+  
+    // Lấy dữ liệu card từ response
+    const updatedCard = response.value || response
 
     // B1: Cập nhập card đang active modal hiện tại
     dispatch(updateCurrentActiveCard(updatedCard))
 
     // B2: Cập nhập bản ghi card trong activeBoard (mestedData)
-    // dispatch(updateCardInBoard(updatedCard))
+    dispatch(updateCardInBoard(updatedCard))
 
     return updatedCard
   }
@@ -91,17 +95,38 @@ function ActiveCard() {
     callApiUpdateCard({ title: newTitle.trim() })
   }
 
+  const onUpdateCardDescription = (newDSC) => {
+    // console.log(newDSC.trim())
+    // Gọi API...
+    callApiUpdateCard({ description: newDSC.trim() })
+  }
+
   const onUploadCardCover = (event) => {
-    console.log(event.target?.files[0])
+    // Lấy file thông qua e.target?.files[0] và validate nó trước khi xử lý
+    // console.log(event.target?.files[0])
     const error = singleFileValidator(event.target?.files[0])
     if (error) {
       toast.error(error)
       return
     }
+    // Sử dụng FormData để xử lý dữ liệu liên quan tới file khi gọi API
     let reqData = new FormData()
     reqData.append('cardCover', event.target?.files[0])
 
     // Gọi API...
+    toast.promise(
+      callApiUpdateCard(reqData).finally(() => event.target.value = ''),
+      { pending: 'Updating in...' }
+    )
+      .then(res => {
+        // console.log(res)
+        // Kiểm tra không có lỗi mới thực hiện hành động cần thiết
+        if (!res.error) {
+          toast.success('Updated card cover successfully!')
+        }
+        // Dù có lỗi hay không cũng clear giá trị của file gửi đi, để có thể gửi liên tiếp
+        event.target.value = ''
+      })
   }
 
   return (
@@ -169,7 +194,10 @@ function ActiveCard() {
               </Box>
 
               {/* Feature 03: Xử lý mô tả của Card */}
-              <CardDescriptionMdEditor />
+              <CardDescriptionMdEditor
+                cardDescriptionProp={activeCard?.description}
+                handleUpdateCardDescription={onUpdateCardDescription}
+              />
             </Box>
 
             <Box sx={{ mb: 3 }}>

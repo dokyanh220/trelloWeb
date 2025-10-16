@@ -70,8 +70,10 @@ function AccountTab() {
     // }
 
     // Gọi API...
-    toast.promise(dispatch(updateUserAPI(reqData)),
-      { pending: 'Updating in...' })
+    toast.promise(
+      dispatch(updateUserAPI(reqData)),
+      { pending: 'Updating in...' }
+    )
       .then(res => {
         // console.log(res)
         // Kiểm tra không có lỗi mới thực hiện hành động cần thiết
