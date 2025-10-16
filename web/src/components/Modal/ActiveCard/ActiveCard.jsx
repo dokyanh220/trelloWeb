@@ -35,7 +35,8 @@ import CardActivitySection from './CardActivitySection'
 
 import { styled } from '@mui/material/styles'
 import { useDispatch, useSelector } from 'react-redux'
-import { clearCurrentActiveCard, selectCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import { clearCurrentActiveCard, selectCurrentActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import { updateCardDetailsAPI } from '~/apis'
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -70,9 +71,24 @@ function ActiveCard() {
     dispatch(clearCurrentActiveCard())
   }
 
+  // Func dùng chung cho các trường hợp cập nhật Card
+  const callApiUpdateCard = async (updatedData) => {
+    const updatedCard = await updateCardDetailsAPI(activeCard._id, updatedData)
+
+    // B1: Cập nhập card đang active modal hiện tại
+    dispatch(updateCurrentActiveCard(updatedCard))
+
+    // B2: Cập nhập bản ghi card trong activeBoard (mestedData)
+    // dispatch(updateCardInBoard(updatedCard))
+
+    return updatedCard
+  }
+
   const onUpdateCardTitle = (newTitle) => {
-    console.log(newTitle.trim())
+    // console.log(newTitle.trim())
     // Gọi API...
+    // Format chuẩn dữ liệu cho chức năng cập nhập title
+    callApiUpdateCard({ title: newTitle.trim() })
   }
 
   const onUploadCardCover = (event) => {
