@@ -89,7 +89,7 @@ function Column({ column }) {
       if (columnToUpdate) {
         columnToUpdate.title = newTitle
       }
-      dispatch(updateCurrentActiveBoard(newBoard))
+      // dispatch(updateCurrentActiveBoard(newBoard))
     })
   }
 
@@ -284,7 +284,7 @@ function Column({ column }) {
             }}>
               <Button startIcon={<AddCardIcon />} onClick={toggleOpenNewCardForm}>Add new card</Button>
               <Tooltip title="Drag to move">
-                <DragHandleIcon sx={{ cursor: 'pointer' }} />
+                <DragHandleIcon sx={{ cursor: 'grab' }} />
               </Tooltip>
             </Box>
             : <Box sx={{

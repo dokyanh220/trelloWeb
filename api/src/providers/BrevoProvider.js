@@ -12,7 +12,7 @@ import { env } from '~/config/environment'
 * https://github.com/getbrevo/brevo-node
 */
 let apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
-let apiKey = apiInstance.authentications ['apiKey']
+let apiKey = apiInstance.authentications['apiKey']
 apiKey.apiKey = env.BREVO_API_KEY
 
 const sendEmail = async (recipientEmail, customSubject, htmlContent) => {

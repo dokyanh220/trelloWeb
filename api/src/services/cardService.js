@@ -19,7 +19,7 @@ const createNew = async (reqBody) => {
   } catch (error) { throw error }
 }
 
-const update = async (cardId, reqBody, cardCoverFile) => {
+const update = async (cardId, reqBody, cardCoverFile, userInfo) => {
   try {
     const updateData = {
       ...reqBody,
@@ -53,6 +53,16 @@ const update = async (cardId, reqBody, cardCoverFile) => {
       updatedCard = await cardModel.update(cardId, {
         cover: uploadResult.secure_url
       })
+    } else if (updateData.commentToAdd) {
+      // Tạo dữ liệu comment thêm vào database
+      const commentData = {
+        userId: userInfo._id,
+        userEmail: userInfo.email,
+        ...updateData.commentToAdd,
+        commentedAt: Date.now()
+      }
+
+      updatedCard = await cardModel.unShiftNewComment(cardId, commentData)
     } else {
       updatedCard = await cardModel.update(cardId, updateData)
     }

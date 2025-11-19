@@ -1,6 +1,5 @@
 import { Box } from '@mui/material'
 import Tooltip from '@mui/material/Tooltip'
-import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import VpnLockIcon from '@mui/icons-material/VpnLock'
@@ -8,12 +7,10 @@ import PublicIcon from '@mui/icons-material/Public'
 import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import BoltIcon from '@mui/icons-material/Bolt'
 import FilterListIcon from '@mui/icons-material/FilterList'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { capitalizeFirstLetter } from '~/utils/formatters'
 import { useEffect, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
 import BoardUserGroup from './BoardUserGroup'
+import InviteBoardUser from './InviteBoardUser'
 
 const MENU_STYLES = {
   color: 'white',
@@ -57,9 +54,6 @@ function BoardBar({ board }) {
     el.addEventListener('wheel', handleWheel)
     return () => el.removeEventListener('wheel', handleWheel)
   }, [])
-
-  const dispatch = useDispatch()
-  const currentUser = useSelector(selectCurrentUser)
 
   return (
     <Box
@@ -114,17 +108,7 @@ function BoardBar({ board }) {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Button
-          variant="outlined"
-          startIcon={<PersonAddIcon />}
-          sx={{
-            color: 'white',
-            borderColor: 'white',
-            '&:hover': { borderColor: 'white' }
-          }}
-        >
-          Invite
-        </Button>
+        <InviteBoardUser boardId={board._id} />
 
         <BoardUserGroup boardUsers={board?.FE_allUsers} />
       </Box>
