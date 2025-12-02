@@ -165,7 +165,7 @@ const getBoards = async (userId, page, itemsPerPage) => {
         { memberIds: { $all: [new ObjectId(userId)] } }
       ] }
     ]
-  
+
     const query = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
       { $match: { $and: queryCollections } },
       // sort title của board a-z(mặc định sẽ bị chữ 'B' đứng trước chữ 'a')
@@ -183,14 +183,26 @@ const getBoards = async (userId, page, itemsPerPage) => {
     ],
     { collation: { locale: 'en' } }
     ).toArray()
-  
+
     const res = query[0]
-    
+
     return {
       boards: res.queryBoards || [],
       totalBoards: res.queryTotalBoards[0]?.countedAllBoards || 0
     }
   } catch (error) { throw Error(error) }
+}
+
+const pushMember = async (boardId, memberId) => {
+  // pull 1 phần tử ra khỏi mảng columnOrderIds
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(boardId) },
+      { $pull: { memberIds: new ObjectId(memberId) } },
+      { returnDocument: 'after' }
+    )
+    return result
+  } catch (error) { throw new Error(error) }
 }
 export const boardModel = {
   BOARD_COLLECTION_NAME,
@@ -201,5 +213,6 @@ export const boardModel = {
   pushColumnOrderIds,
   update,
   pullColumnOrderIds,
-  getBoards
+  getBoards,
+  pushMember
 }

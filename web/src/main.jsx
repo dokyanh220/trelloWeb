@@ -28,9 +28,9 @@ injectStore(store)
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
-  <BrowserRouter basename='/'>
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
+      <BrowserRouter basename='/'>
         <CssVarsProvider theme={theme}>
           <ConfirmProvider>
             <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
@@ -45,8 +45,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <App />
           </ConfirmProvider>
         </CssVarsProvider>
-      </PersistGate>
-    </Provider>
-  </BrowserRouter>
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>
   // </React.StrictMode>
 )

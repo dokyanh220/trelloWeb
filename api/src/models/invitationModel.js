@@ -85,8 +85,13 @@ const update = async (invitationId, updateData) => {
   } catch (error) { throw new Error(error) }
 }
 
+const findByUser = async (userId) => {
+
+}
+
 export const invitationModel = {
   createNewBoardInvitation,
   findOneById,
-  update
+  update,
+  findByUser
 }
